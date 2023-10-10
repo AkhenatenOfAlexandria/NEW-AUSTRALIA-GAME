@@ -1,4 +1,6 @@
-class CHEST:
+from ENTITIES.ENTITY import ENTITY
+
+class CHEST(ENTITY):
     CHESTS = []
 
     def __init__(self

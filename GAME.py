@@ -1,20 +1,39 @@
-from GAME_INTRODUCTION import GAME_INTRODUCTION
-from PROCESS_COMMAND import PROCESS_COMMAND
-from CHEST import CHEST
-import GAME_WORLD
-from LOCATION import LOCATION
+import random
 
-def GET_PLAYER_INPUT():
-    return input("Enter your COMMAND: ")
+from WORLD.GAME_DISPLAY import GAME_DISPLAY
+from ENTITIES.MOBS.PLAYER.PLAYER import PLAYER
+from ENTITIES.MOBS.KAREN import KAREN
 
 
 def GAME():
     GAME_RUNNING = True
-    PLAYER_POSITION = (0, 0)  # Starting position of the player
-    LOCATION.ADD_ENTITY(GAME_WORLD.SMALL_ROOM1, CHEST)
-    GAME_INTRODUCTION(PLAYER_POSITION)
+    print("GAME RUNNING.")
+    
+    PLAYER_COUNT = 1
+    KAREN_COUNT = 8
+    
+    MOBS = []
+    
+    # initalize Player
+    PLAYER1 = PLAYER()
+    MOBS.append(PLAYER1) 
+    
+    for i in range(KAREN_COUNT):
+        MOBS.append(KAREN(POSITION=(random.randint(-15, 15), random.randint(-15, 15)))) # initalize Karen
+    
+
+    GAME_DISPLAY(MOBS)
     while GAME_RUNNING:
-        COMMAND = GET_PLAYER_INPUT()
-        GAME_RUNNING, PLAYER_POSITION = PROCESS_COMMAND(COMMAND, PLAYER_POSITION)
+        for mob in MOBS:
+            GAME_RUNNING = mob.UPDATE(MOBS, PLAYER1)
+            if not GAME_RUNNING:
+                break
+        if not GAME_RUNNING:
+            break
+        
+        if PLAYER1.POSITION[1] < -15:
+            print("Level complete!")
+            break
+        GAME_DISPLAY(MOBS)
 
     print("GAME OVER.")

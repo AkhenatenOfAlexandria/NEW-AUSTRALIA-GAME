@@ -1,0 +1,14 @@
+from LOGIC.LOCATION_ID import LOCATION_ID
+from LOGIC.MATH import VECTOR_DIRECTION
+
+def FOLLOW_PLAYER(PLAYER, MOB):
+    if PLAYER.POSITION == MOB.POSITION:
+        return False
+    else:
+        PLAYER_X, PLAYER_Z = PLAYER.POSITION
+        MOB_X, MOB_Z = MOB.POSITION
+
+        DX = PLAYER_X - MOB_X
+        DZ = PLAYER_Z - MOB_Z
+
+        return VECTOR_DIRECTION(DX, DZ)
