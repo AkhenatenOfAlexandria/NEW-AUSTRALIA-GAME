@@ -9,12 +9,14 @@ def PROCESS_COMMAND(COMMAND, PLAYER, MOBS):
     elif COMMAND.upper().startswith(("NORTH", "SOUTH", "EAST", "WEST")):
         PARTS = COMMAND.split()
         DIRECTION = PARTS[0].upper()
-        '''DISTANCE = int(PARTS[1]) if len(PARTS) > 1\
-            else 1'''
         DISTANCE = 1
         POSITION = PLAYER.MOVE(DIRECTION, DISTANCE)
         if POSITION == PLAYER.POSITION:
             print("There is a wall in your path.")
+        else:
+            for mob in MOBS:
+                if mob != PLAYER and PLAYER.POSITION == mob.POSITION:
+                    mob.COMBAT_CHECK(PLAYER, MOBS)
         CURRENT_LOCATION = LOCATION_ID(*POSITION)
 
     elif COMMAND.upper() == "LOOK":

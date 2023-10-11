@@ -38,18 +38,19 @@ class MOB(ENTITY):
 
     def COMBAT_CHECK(self, ENEMY, MOBS):
         ATTACK, GAME_RUNNING = False, True
-        if self.POSITION == ENEMY.POSITION:
-            if ENEMY.NAME == "PLAYER" and not self.NAME == "PLAYER":
-                ATTACK = True
-                CHECK = ROLL(1, 20)
-                if CHECK == 1:
-                    return ATTACK, GAME_RUNNING
-                elif CHECK == 20 or (CHECK+2) > ENEMY.ARMOR_CLASS:
-                    DAMAGE = max(0, self.STRENGTH_MODIFIER) + 3
-                    ENEMY.HEALTH -= DAMAGE
-                    print(f"{self.NAME} hit {ENEMY.NAME}.")
-                    if ENEMY.HEALTH <= 0:
-                        GAME_RUNNING = ENEMY.DIE(MOBS)
+        ATTACK = True
+        CHECK = ROLL(1, 20)
+        if CHECK == 1:
+            print(f"{self.NAME} attacked {ENEMY.NAME} and missed.")
+            return ATTACK, GAME_RUNNING
+        elif CHECK == 20 or (CHECK+2) > ENEMY.ARMOR_CLASS:
+            DAMAGE = max(0, self.STRENGTH_MODIFIER) + 3
+            ENEMY.HEALTH -= DAMAGE
+            print(f"{self.NAME} hit {ENEMY.NAME}.")
+            if ENEMY.HEALTH <= 0:
+                GAME_RUNNING = ENEMY.DIE(MOBS)
+        else:
+            print(f"{self.NAME} attacked {ENEMY.NAME} and missed.")
 
         return ATTACK, GAME_RUNNING
     

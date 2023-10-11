@@ -16,10 +16,11 @@ def GAME():
     
     # initalize Player
     PLAYER1 = PLAYER()
-    MOBS.append(PLAYER1) 
+    MOBS.append(PLAYER1)
     
     for i in range(KAREN_COUNT):
         MOBS.append(KAREN(POSITION=(random.randint(-15, 15), random.randint(-15, 15)))) # initalize Karen
+        MOBS[i+PLAYER_COUNT].NAME += str(i+1)
     
 
     GAME_DISPLAY(MOBS)

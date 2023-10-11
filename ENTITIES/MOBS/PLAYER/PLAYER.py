@@ -41,6 +41,5 @@ class PLAYER(MOB):
     
 
     def DIE(self, MOBS):
-        MOBS.remove(self)
         print("You died.")
         return False

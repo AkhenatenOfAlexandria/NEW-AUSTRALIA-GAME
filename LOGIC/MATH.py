@@ -23,8 +23,22 @@ def VECTOR_DIRECTION(X, Y):
     elif math.pi*5/4 < radians <= math.pi * 7/4:
         return "WEST"
     
+
 def ROLL(COUNT, DIE, *args):
     RESULT = 0
     for i in range(COUNT):
         RESULT += random.randint(1, DIE)
     return RESULT
+
+
+def POSITION_CORNERS(X, Y):
+    UPPER_LEFT_CORNER = (X*5-2.5, Y*5+2.5)
+    UPPER_RIGHT_CORNER = (X*5+2.5, Y*5+2.5)
+    LOWER_RIGHT_CORNER = (X*5+2.5, Y*5-2.5)
+    LOWER_LEFT_CORNER = (X*5-2.5, Y*5-2.5)
+    CORNERS = (UPPER_LEFT_CORNER, UPPER_RIGHT_CORNER, LOWER_RIGHT_CORNER, LOWER_LEFT_CORNER)
+    return CORNERS
+
+
+def SLOPE(X0, X1, Y0, Y1):
+    return (Y1-Y0)/(X1-X0)
