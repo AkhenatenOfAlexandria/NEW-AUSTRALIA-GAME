@@ -1,7 +1,7 @@
 import math
 
 from ENTITIES.ENTITY import ENTITY
-from LOGIC.LOCATION_ID import LOCATION_ID
+from WORLD.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import ROLL
 
 
@@ -41,24 +41,29 @@ class MOB(ENTITY):
         ATTACK = True
         CHECK = ROLL(1, 20)
         if CHECK == 1:
-            print(f"{self.NAME} attacked {ENEMY.NAME} and missed.")
+            input(f"{self.NAME} attacked {ENEMY.NAME} and missed.")
             return ATTACK, GAME_RUNNING
         elif CHECK == 20 or (CHECK+2) > ENEMY.ARMOR_CLASS:
             DAMAGE = max(0, self.STRENGTH_MODIFIER) + 3
             ENEMY.HEALTH -= DAMAGE
-            print(f"{self.NAME} hit {ENEMY.NAME}.")
             if ENEMY.HEALTH <= 0:
+                print(f"{self.NAME} hit {ENEMY.NAME}.")
                 GAME_RUNNING = ENEMY.DIE(MOBS)
+            else:
+                input(f"{self.NAME} hit {ENEMY.NAME} (HEALTH: {ENEMY.HEALTH}/{ENEMY.MAX_HEALTH}).")
         else:
-            print(f"{self.NAME} attacked {ENEMY.NAME} and missed.")
+            input(f"{self.NAME} attacked {ENEMY.NAME} and missed.")
 
         return ATTACK, GAME_RUNNING
     
     
     def DIE(self, MOBS):
         MOBS.remove(self)
-        print(f"{self.NAME} died.")
-        return True
+        input(f"{self.NAME} died.")
+        if self.NAME == "YOU":
+            return False
+        else:
+            return True
     
     
     def MOVE(self, DIRECTION, DISTANCE=1):

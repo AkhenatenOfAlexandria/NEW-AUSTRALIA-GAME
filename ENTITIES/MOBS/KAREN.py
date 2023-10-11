@@ -1,5 +1,6 @@
 from ENTITIES.MOBS.MOB import MOB
 from ENTITIES.MOBS.AI.FOLLOW_PLAYER import FOLLOW_PLAYER
+from WORLD.LOCATION_ID import LOCATION_ID
 
 class KAREN(MOB):
     def __init__(
@@ -32,7 +33,18 @@ class KAREN(MOB):
         GAME_RUNNING = True
         DIRECTION = FOLLOW_PLAYER(PLAYER, self)
         if DIRECTION:
-            self.POSITION = self.MOVE(DIRECTION)
+            if LOCATION_ID(*self.POSITION) == LOCATION_ID(*PLAYER.POSITION):
+                START_IN_ROOM = True
+            else:
+                START_IN_ROOM = False
+            NEW_POSITION = self.MOVE(DIRECTION)
+            if NEW_POSITION != self.POSITION:
+                self.POSITION = NEW_POSITION
+                if LOCATION_ID(*self.POSITION) == LOCATION_ID(*PLAYER.POSITION):
+                    if START_IN_ROOM:
+                        input(f"{self.NAME} moved {DIRECTION}.")
+                    else:
+                        input(f"{self.NAME} entered the room at {self.POSITION}.")
         else:
             try:
                  ATTACK, GAME_RUNNING = self.COMBAT_CHECK(PLAYER, MOBS)

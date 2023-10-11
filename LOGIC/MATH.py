@@ -42,3 +42,17 @@ def POSITION_CORNERS(X, Y):
 
 def SLOPE(X0, X1, Y0, Y1):
     return (Y1-Y0)/(X1-X0)
+
+def RELATIVE_LOCATION(X0, Y0, X1, Y1):
+    X_DISTANCE = abs(X1-X0)*5
+    Y_DISTANCE = abs(Y1-Y0)*5
+    if X1-X0 >= 0:
+        X_DIRECTION = "NORTH"
+    else:
+        X_DIRECTION = "SOUTH"
+    if Y1-Y0 >= 0:
+        Y_DIRECTION = "EAST"
+    else:
+        Y_DIRECTION = "WEST"
+    return X_DISTANCE, Y_DISTANCE, X_DIRECTION, Y_DIRECTION
+    

@@ -27,19 +27,9 @@ class PLAYER(MOB):
             *args
             )
         
-        self.NAME = "PLAYER"
+        self.NAME = "YOU"
 
 
-    def GET_PLAYER_COMMAND(self):
-        return input("Enter your COMMAND: ")
-
-    
     def UPDATE(self, MOBS, *args):
-        COMMAND = self.GET_PLAYER_COMMAND()
-        GAME_RUNNING, self.POSITION = PROCESS_COMMAND(COMMAND, self, MOBS)
+        GAME_RUNNING, self.POSITION = PROCESS_COMMAND(self, MOBS)
         return GAME_RUNNING
-    
-
-    def DIE(self, MOBS):
-        print("You died.")
-        return False
