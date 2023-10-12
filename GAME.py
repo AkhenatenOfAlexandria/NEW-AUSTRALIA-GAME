@@ -8,7 +8,7 @@ from WORLD.LOCATION_ID import LOCATION_ID
 
 def GAME():
     GAME_RUNNING = True
-    VERSION = "ALPHA.0.0"
+    VERSION = "ALPHA.0.1"
     input(f"Welcome to New Australia: The Game {VERSION}!")
     input("New Australia: The Game is brought to you by iReverend Studios' The Jesuit.")
     input("The Jesuit (created by CaffeineSnake) is upcoming Christian superhero film from the studio that brought you The Methodist. Ignatius of Loyola is sent from Heaven to purify the Jesuit Order. Meanwhile, the Order sends Lenyn Ynot to find J. K. Rowling. Can Ignatius stop them before they activate the Millennium Clock?\n")
@@ -25,7 +25,7 @@ def GAME():
     while True:
         try:
             KAREN_COUNT = int(input("Enter difficulty: "))
-            if KAREN_COUNT > 0:
+            if KAREN_COUNT >= 0:
                 break  # Exit the loop if the user entered a valid integer
             else:
                 print("Invalid input. Enter a whole number.")    
@@ -41,13 +41,14 @@ def GAME():
     PLAYER1 = PLAYER()
     MOBS.append(PLAYER1)
     
-    print("ADDING MONSTERS.\n")
-    for i in range(KAREN_COUNT):
-        _POSITION = (100, 100)
-        while not LOCATION_ID(*_POSITION):
-            _POSITION = (random.randint(-15, 15), random.randint(-15, 15))
-        MOBS.append(KAREN(POSITION=(_POSITION))) # initalize Karen
-        MOBS[i+PLAYER_COUNT].NAME += str(i)
+    if KAREN_COUNT:
+        print("ADDING MONSTERS.\n")
+        for i in range(KAREN_COUNT):
+            _POSITION = (100, 100)
+            while not LOCATION_ID(*_POSITION):
+                _POSITION = (random.randint(-15, 15), random.randint(-15, 15))
+            MOBS.append(KAREN(POSITION=(_POSITION))) # initalize Karen
+            MOBS[i+PLAYER_COUNT].NAME += f".{i+PLAYER_COUNT}"
     
     print("Game ready.")
     TURN = 1
@@ -55,19 +56,16 @@ def GAME():
     
     while GAME_RUNNING:
         for mob in MOBS:
-            GAME_RUNNING = mob.UPDATE(MOBS, PLAYER1)
+            GAME_RUNNING = mob.UPDATE(MOBS, TURN)
             if not GAME_RUNNING:
                 break
         if not GAME_RUNNING:
             break
         
-        if PLAYER1.POSITION[1] < -15:
-            print("Level complete!")
-            break
         input(f"End of TURN {TURN}.\n")
         TURN += 1
         GAME_DISPLAY(MOBS, TURN)
         
 
-    print("GAME OVER.\n")
+    print("\nGAME OVER.\n")
     print(f"Thank you for playing New Australia: The Game {VERSION} by John-Mary Knight.")

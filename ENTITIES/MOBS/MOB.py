@@ -31,9 +31,9 @@ class MOB(ENTITY):
         self.MAX_HEALTH = HEALTH + self.CONSTITUTION_MODIFIER
         self.HEALTH = self.MAX_HEALTH
         self.ARMOR_CLASS = self.DEXTERITY_MODIFIER + 10
+        self.WEAPON = None
         for arg in args:
-            #setattr(self, arg, True)
-            print(type(self), arg)
+            setattr(self, arg, True)
     
 
     def COMBAT_CHECK(self, ENEMY, MOBS):
@@ -67,28 +67,25 @@ class MOB(ENTITY):
     
     
     def MOVE(self, DIRECTION, DISTANCE=1):
-        X, Z = self.POSITION
+        X, Y = self.POSITION
 
         if DIRECTION == "NORTH":
-            X += DISTANCE
-        elif DIRECTION == "SOUTH":
             X -= DISTANCE
+        elif DIRECTION == "SOUTH":
+            X += DISTANCE
         elif DIRECTION == "EAST":
-            Z += DISTANCE
+            Y += DISTANCE
         elif DIRECTION == "WEST":
-            Z -= DISTANCE
+            Y -= DISTANCE
 
         CURRENT_LOCATION = LOCATION_ID(*self.POSITION)
-        NEW_LOCATION = LOCATION_ID(X, Z)
+        NEW_LOCATION = LOCATION_ID(X, Y)
         
-        if NEW_LOCATION and not CURRENT_LOCATION:
-            return X, Z # Move the mob if he is clipped out of the map, but not if he would clip out of the map
-        
-        if NEW_LOCATION == CURRENT_LOCATION:
-            return X, Z # Move the mob if he is staying in the room
+        if not CURRENT_LOCATION or NEW_LOCATION == CURRENT_LOCATION:
+            return X, Y # Move the mob if he is clipped out of the map, but not if he would clip out of the map 
         elif DIRECTION in CURRENT_LOCATION.DOORS:
-            DOOR_X, DOOR_Z = CURRENT_LOCATION.DOORS[DIRECTION]
-            if (DIRECTION in ["NORTH", "SOUTH"] and DOOR_Z == Z) or (DIRECTION in ["EAST", "WEST"] and DOOR_X == X):
-                return X, Z # Move the mob out of the room if he is aligned with the door
+            DOOR_X, DOOR_Y = CURRENT_LOCATION.DOORS[DIRECTION]
+            if (DIRECTION in ["NORTH", "SOUTH"] and DOOR_Y == Y) or (DIRECTION in ["EAST", "WEST"] and DOOR_X == X):
+                return X, Y # Move the mob out of the room if he is aligned with the door
 
         return self.POSITION  # Keep the mob in the current position

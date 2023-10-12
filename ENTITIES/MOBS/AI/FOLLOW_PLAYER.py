@@ -5,10 +5,10 @@ def FOLLOW_PLAYER(PLAYER, MOB):
     if PLAYER.POSITION == MOB.POSITION:
         return False
     else:
-        PLAYER_X, PLAYER_Z = PLAYER.POSITION
-        MOB_X, MOB_Z = MOB.POSITION
+        PLAYER_X, PLAYER_Y = PLAYER.POSITION
+        MOB_X, MOB_Y = MOB.POSITION
 
         DX = PLAYER_X - MOB_X
-        DZ = PLAYER_Z - MOB_Z
+        DY = PLAYER_Y - MOB_Y
 
-        return VECTOR_DIRECTION(DX, DZ)
+        return VECTOR_DIRECTION(DX, DY)

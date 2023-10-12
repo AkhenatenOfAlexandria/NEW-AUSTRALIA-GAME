@@ -1,0 +1,7 @@
+Alpha.0.1:
+    - Room descriptions display slightly differently
+    - More information when a mob enters a room or player changes rooms
+    - Difficulty can now be 0
+    - Patched coordinates: X=South, Y=West, Z=level, W=realm
+    - Room description includes size and wall locations
+    - Added Inventory accessible with "INVENTORY"

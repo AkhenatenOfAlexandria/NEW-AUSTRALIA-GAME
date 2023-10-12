@@ -3,7 +3,7 @@ import random
 
 def VECTOR_DIRECTION_RADIANS(X, Y):   
     # Calculate the angle in radians using atan2
-    angle_radians = math.atan2(Y, X)
+    angle_radians = math.atan2(X, Y)
 
     while angle_radians < 0:
         angle_radians += 2 * math.pi
@@ -15,13 +15,13 @@ def VECTOR_DIRECTION_RADIANS(X, Y):
 def VECTOR_DIRECTION(X, Y):
     radians = VECTOR_DIRECTION_RADIANS(X, Y)
     if radians <= math.pi/4 or radians > math.pi*7/4:
-        return "NORTH"
+        return "EAST"
     elif math.pi/4 < radians <= math.pi*3/4:
-        return "EAST" #east
+        return "SOUTH" #east
     elif math.pi*3/4 < radians <= math.pi*5/4:
-        return "SOUTH" #south
+        return "WEST" #south
     elif math.pi*5/4 < radians <= math.pi * 7/4:
-        return "WEST"
+        return "NORTH"
     
 
 def ROLL(COUNT, DIE, *args):
@@ -47,9 +47,9 @@ def RELATIVE_LOCATION(X0, Y0, X1, Y1):
     X_DISTANCE = abs(X1-X0)*5
     Y_DISTANCE = abs(Y1-Y0)*5
     if X1-X0 >= 0:
-        X_DIRECTION = "NORTH"
-    else:
         X_DIRECTION = "SOUTH"
+    else:
+        X_DIRECTION = "NORTH"
     if Y1-Y0 >= 0:
         Y_DIRECTION = "EAST"
     else:

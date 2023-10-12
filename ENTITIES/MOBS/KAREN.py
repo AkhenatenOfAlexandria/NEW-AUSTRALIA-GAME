@@ -1,6 +1,7 @@
 from ENTITIES.MOBS.MOB import MOB
 from ENTITIES.MOBS.AI.FOLLOW_PLAYER import FOLLOW_PLAYER
 from WORLD.LOCATION_ID import LOCATION_ID
+from LOGIC.MATH import RELATIVE_LOCATION
 
 class KAREN(MOB):
     def __init__(
@@ -29,8 +30,9 @@ class KAREN(MOB):
            self.NAME = "KAREN"
     
 
-    def UPDATE(self, MOBS, PLAYER):
+    def UPDATE(self, MOBS, *args):
         GAME_RUNNING = True
+        PLAYER = MOBS[0]
         DIRECTION = FOLLOW_PLAYER(PLAYER, self)
         if DIRECTION:
             if LOCATION_ID(*self.POSITION) == LOCATION_ID(*PLAYER.POSITION):
@@ -44,7 +46,10 @@ class KAREN(MOB):
                     if START_IN_ROOM:
                         input(f"{self.NAME} moved {DIRECTION}.")
                     else:
-                        input(f"{self.NAME} entered the room at {self.POSITION}.")
+                        CURRENT_LOCATION = LOCATION_ID(*NEW_POSITION).DESCRIPTION
+                        MOB_INDEX = MOBS.index(self)
+                        X_DISTANCE, Y_DISTANCE, X_DIRECTION, Y_DIRECTION = RELATIVE_LOCATION(*PLAYER.POSITION, *self.POSITION)
+                        input(f"{self.NAME} (ID: {MOB_INDEX}, HEALTH: {self.HEALTH}/{self.MAX_HEALTH}) entered the {CURRENT_LOCATION}: {X_DISTANCE} feet {X_DIRECTION}, {Y_DISTANCE} feet {Y_DIRECTION}.")
         else:
             try:
                  ATTACK, GAME_RUNNING = self.COMBAT_CHECK(PLAYER, MOBS)
