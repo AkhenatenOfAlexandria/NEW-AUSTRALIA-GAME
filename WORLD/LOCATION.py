@@ -23,6 +23,7 @@ class LOCATION:
         SOUTH = (self.MAX_X-X)*5
         EAST = (self.MAX_Y-Y)*5
         WEST = (Y-self.MIN_Y)*5
-        DESCRIPTION = f"The {self.DESCRIPTION} is {LENGTH_X} feet by {LENGTH_Y} feet. The walls are {NORTH} feet NORTH, {SOUTH} feet SOUTH, {EAST} feet EAST, and {WEST} feet WEST."
+        
+        DESCRIPTION = f"\n\tThe {self.DESCRIPTION} is {LENGTH_X} feet by {LENGTH_Y} feet. The walls are {NORTH} feet NORTH, {SOUTH} feet SOUTH, {EAST} feet EAST, and {WEST} feet WEST."
         return DESCRIPTION
     

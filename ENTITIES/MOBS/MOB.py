@@ -3,6 +3,7 @@ import math
 from ENTITIES.ENTITY import ENTITY
 from WORLD.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import ROLL
+from ENTITIES.ITEMS.MELEE_WEAPON import MELEE_WEAPON
 
 
 class MOB(ENTITY):
@@ -16,50 +17,104 @@ class MOB(ENTITY):
             WISDOM,
             CHARISMA,
             HEALTH,
-            *args
+            *args, **kwargs
             ):
-        super().__init__(POSITION)
-        self.STRENGTH = STRENGTH
-        self.DEXTERITY = DEXTERITY 
-        self.CONSTITUTION = CONSTITUTION
-        self.INTELLIGENCE = INTELLIGENCE
-        self.WISDOM = WISDOM
-        self.CHARISMA = CHARISMA
-        self.STRENGTH_MODIFIER = math.floor((STRENGTH-10)/2)
-        self.DEXTERITY_MODIFIER = math.floor((DEXTERITY-10)/2)
-        self.CONSTITUTION_MODIFIER = math.floor((CONSTITUTION-10)/2)
+        super().__init__(POSITION, *args, **kwargs)
+
+        stats = {
+            'STRENGTH': STRENGTH,
+            'DEXTERITY': DEXTERITY,
+            'CONSTITUTION': CONSTITUTION,
+            'INTELLIGENCE': INTELLIGENCE,
+            'WISDOM': WISDOM,
+            'CHARISMA': CHARISMA
+        }
+
+        for stat, value in stats.items():
+            setattr(self, f'{stat}', value)
+            setattr(self, f'{stat}_MODIFIER', self.MODIFIER(value))
+
         self.MAX_HEALTH = HEALTH + self.CONSTITUTION_MODIFIER
         self.HEALTH = self.MAX_HEALTH
-        self.ARMOR_CLASS = self.DEXTERITY_MODIFIER + 10
-        self.WEAPON = None
-        for arg in args:
-            setattr(self, arg, True)
+
+        self.INVENTORY = {"WEAPON": None, "ARMOR": None, "SHIELD": False, "GOLD": 0.0, "ITEMS":[]}
+        
+        self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
+        
     
 
-    def COMBAT_CHECK(self, ENEMY, MOBS):
-        ATTACK, GAME_RUNNING = False, True
-        ATTACK = True
-        CHECK = ROLL(1, 20)
-        if CHECK == 1:
-            input(f"{self.NAME} attacked {ENEMY.NAME} and missed.")
-            return ATTACK, GAME_RUNNING
-        elif CHECK == 20 or (CHECK+2) > ENEMY.ARMOR_CLASS:
-            DAMAGE = max(0, self.STRENGTH_MODIFIER) + 3
-            ENEMY.HEALTH -= DAMAGE
-            if ENEMY.HEALTH <= 0:
-                print(f"{self.NAME} hit {ENEMY.NAME}.")
-                GAME_RUNNING = ENEMY.DIE(MOBS)
-            else:
-                input(f"{self.NAME} hit {ENEMY.NAME} (HEALTH: {ENEMY.HEALTH}/{ENEMY.MAX_HEALTH}).")
+    def MODIFIER(self, ATTRIBUTE):
+        _MODIFIER = math.floor((ATTRIBUTE-10)/2)
+        return _MODIFIER
+    
+    
+    def ARMOR_CLASS_CALCULUS(self):
+        _ARMOR = self.INVENTORY["ARMOR"]
+        if _ARMOR:
+            _ARMOR_CLASS = _ARMOR.ARMOR_CLASS
+            if "DEFENSE" in self.ATTRIBUTES:
+                _ARMOR_CLASS += 1
+            if not _ARMOR.HEAVY:
+                _ARMOR_CLASS += self.DEXTERITY_MODIFIER    
+
         else:
-            input(f"{self.NAME} attacked {ENEMY.NAME} and missed.")
+            _ARMOR_CLASS = 10 + self.DEXTERITY_MODIFIER
+        
+        if self.INVENTORY["SHIELD"]:
+            _ARMOR_CLASS += 2
+
+
+        
+        return _ARMOR_CLASS
+    
+    
+    def COMBAT_CHECK(self, ENEMY, MOBS):
+        ATTACK, GAME_RUNNING = True, True
+
+        WEAPON = self.INVENTORY["WEAPON"]
+
+        PROFICIENCY = 2
+
+        CHECK = ROLL(1, 20)
+        _CHECK = CHECK + PROFICIENCY
+        
+        if WEAPON and "FINESSE" in WEAPON.ATTRIBUTES:
+            _CHECK += max(self.STRENGTH_MODIFIER, self.DEXTERITY_MODIFIER)
+        else:
+            _CHECK += self.STRENGTH_MODIFIER
+
+        if CHECK == 1:
+            print(f"CRITICAL MISS: {self.NAME} attacked {ENEMY.NAME} and missed.")
+            
+        elif CHECK == 20 or _CHECK > ENEMY.ARMOR_CLASS:
+
+            if CHECK == 20:
+                print(f"CRITICAL HIT:")
+            DAMAGE = (
+                ROLL(*WEAPON.DAMAGE) + PROFICIENCY if isinstance(WEAPON, MELEE_WEAPON)
+                else max(0, self.STRENGTH_MODIFIER + PROFICIENCY)
+            )
+            ENEMY.HEALTH -= DAMAGE
+
+            if ENEMY.HEALTH <= 0:
+                print(f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE.")
+                GAME_RUNNING = ENEMY.DIE(MOBS)
+                if hasattr(self, 'EXPERIENCE_LEVEL') and hasattr(ENEMY, 'EXPERIENCE_POINTS'):
+                    self.EXPERIENCE += ENEMY.EXPERIENCE_POINTS
+                    self.XP_LEVEL()
+
+            else:
+                print(f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE (HEALTH: {ENEMY.HEALTH}/{ENEMY.MAX_HEALTH}).")
+
+        else:
+            print(f"{self.NAME} attacked {ENEMY.NAME} and failed.")
 
         return ATTACK, GAME_RUNNING
     
     
     def DIE(self, MOBS):
         MOBS.remove(self)
-        input(f"{self.NAME} died.")
+        print(f"{self.NAME} died.")
         if self.NAME == "YOU":
             return False
         else:
@@ -68,24 +123,30 @@ class MOB(ENTITY):
     
     def MOVE(self, DIRECTION, DISTANCE=1):
         X, Y = self.POSITION
+        MOVED = 0
+        while MOVED < DISTANCE:
+            if DIRECTION == "NORTH":
+                X -= 1
+            elif DIRECTION == "SOUTH":
+                X += 1
+            elif DIRECTION == "EAST":
+                Y += 1
+            elif DIRECTION == "WEST":
+                Y -= 1
+            MOVED +=1
+            CURRENT_LOCATION = LOCATION_ID(*self.POSITION)
+            NEW_LOCATION = LOCATION_ID(X, Y)
 
-        if DIRECTION == "NORTH":
-            X -= DISTANCE
-        elif DIRECTION == "SOUTH":
-            X += DISTANCE
-        elif DIRECTION == "EAST":
-            Y += DISTANCE
-        elif DIRECTION == "WEST":
-            Y -= DISTANCE
+            if CURRENT_LOCATION != NEW_LOCATION:
+                break
 
-        CURRENT_LOCATION = LOCATION_ID(*self.POSITION)
-        NEW_LOCATION = LOCATION_ID(X, Y)
-        
+            
         if not CURRENT_LOCATION or NEW_LOCATION == CURRENT_LOCATION:
             return X, Y # Move the mob if he is clipped out of the map, but not if he would clip out of the map 
         elif DIRECTION in CURRENT_LOCATION.DOORS:
             DOOR_X, DOOR_Y = CURRENT_LOCATION.DOORS[DIRECTION]
             if (DIRECTION in ["NORTH", "SOUTH"] and DOOR_Y == Y) or (DIRECTION in ["EAST", "WEST"] and DOOR_X == X):
                 return X, Y # Move the mob out of the room if he is aligned with the door
+        
 
         return self.POSITION  # Keep the mob in the current position

@@ -3,13 +3,21 @@ def PROCESS_COMMAND(PLAYER, MOBS):
     POSITION = PLAYER.POSITION
     PROMPT = True
     while True:  # Keep looping until a valid command is entered
-        COMMAND = input("Enter your COMMAND: ").upper()  # Ask for a new command
+        COMMAND = input("\nEnter your COMMAND: ").upper()  # Ask for a new command
         if COMMAND == "QUIT":
             return False, POSITION
 
-        elif COMMAND in ("NORTH", "SOUTH", "EAST", "WEST"):
-            DIRECTION = COMMAND
-            POSITION = PLAYER.MOVE(DIRECTION)
+        elif COMMAND.startswith(("NORTH", "SOUTH", "EAST", "WEST")):
+            PARTS = COMMAND.split()
+            DIRECTION = PARTS[0]
+            if PLAYER.ROOM_CHECK(MOBS):
+                DISTANCE = 1
+            elif len(PARTS) > 1:
+                DISTANCE = int(PARTS[1])
+            else:
+                DISTANCE = 1
+
+            POSITION = PLAYER.MOVE(DIRECTION, DISTANCE)
             if POSITION == PLAYER.POSITION:
                 print("There is a wall in your path.")
             else:
@@ -25,8 +33,23 @@ def PROCESS_COMMAND(PLAYER, MOBS):
             return True, POSITION
         
         elif COMMAND == "INVENTORY":
-            _INVENTORY = "INVENTORY: "
-            print(f"INVENTORY: {PLAYER.INVENTORY}")
+            print(f"EXPERIENCE LEVEL: {PLAYER.EXPERIENCE_LEVEL}")
+            print(f"EXPERIENCE POINTS: {PLAYER.EXPERIENCE}")
+            print("INVENTORY:")
+            if PLAYER.INVENTORY["WEAPON"]:
+                WEAPON = PLAYER.INVENTORY["WEAPON"].NAME
+            else:
+                WEAPON = None
+            if PLAYER.INVENTORY["ARMOR"]:
+                ARMOR = PLAYER.INVENTORY["ARMOR"].NAME
+            else:
+                ARMOR = None
+            print(f"\tWEAPON: {WEAPON}")
+            print(f"\tARMOR: {ARMOR}")
+            if PLAYER.INVENTORY["SHIELD"]:
+                print("\tSHIELD")
+            print(f"\tGOLD: {PLAYER.INVENTORY['GOLD']}")
+            print(f'\tITEMS: {PLAYER.INVENTORY["ITEMS"]}')
 
         elif COMMAND == "ATTACK":
             try:

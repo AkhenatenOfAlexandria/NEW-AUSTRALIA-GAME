@@ -24,7 +24,7 @@ def VECTOR_DIRECTION(X, Y):
         return "NORTH"
     
 
-def ROLL(COUNT, DIE, *args):
+def ROLL(COUNT, DIE, *args, **kwargs):
     RESULT = 0
     for i in range(COUNT):
         RESULT += random.randint(1, DIE)

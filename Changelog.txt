@@ -1,3 +1,16 @@
+Alpha.1.0:
+    - Added Shortsword, Scimitar, Shield, Leather Armor, Chain Mail, Longsword, and Handaxe
+    - Player now has Longsword, Shield, and Chain Mail
+    - Karen now has Scimitar, Shield, and Leather Armor
+    - Karen Health now randomly generated
+    - Karens no longer spawn in central room, nor move while Player is out of the room
+    - Added Levels
+    - Number of Karens now determined by Level rather than Difficulty
+    - Player can now move arbitrary number of spaces in empty room
+    - Added Experience Points and Levels gained by killing monsters
+    - Player now starts with 10 Gold
+    - Minor improvements to Display
+
 Alpha.0.1:
     - Room descriptions display slightly differently
     - More information when a mob enters a room or player changes rooms

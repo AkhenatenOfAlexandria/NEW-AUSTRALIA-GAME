@@ -2,11 +2,14 @@ from ENTITIES.MOBS.MOB import MOB
 from ENTITIES.MOBS.AI.FOLLOW_PLAYER import FOLLOW_PLAYER
 from WORLD.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import RELATIVE_LOCATION
+from ENTITIES.ITEMS.SCIMITAR import SCIMITAR
+from ENTITIES.ITEMS.LEATHER_ARMOR import LEATHER_ARMOR
+
 
 class KAREN(MOB):
     def __init__(
             self,
-            POSITION=(0,0),
+            POSITION,
             STRENGTH=8,
             DEXTERITY=14,
             CONSTITUTION=10,
@@ -14,7 +17,7 @@ class KAREN(MOB):
             WISDOM=8,
             CHARISMA=8,
             HEALTH=7,
-            *args
+            *args, **kwargs
             ):
            super().__init__(
             POSITION,
@@ -25,17 +28,29 @@ class KAREN(MOB):
             WISDOM,
             CHARISMA,
             HEALTH,
-            *args
+            *args, **kwargs
             )
            self.NAME = "KAREN"
+           self.INVENTORY["WEAPON"] = SCIMITAR()
+           self.INVENTORY["SHIELD"] = True
+           self.INVENTORY["ARMOR"] = LEATHER_ARMOR()
+           self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
+
+           self.EXPERIENCE_POINTS = 50
     
 
-    def UPDATE(self, MOBS, *args):
+    def UPDATE(self, MOBS, TURN, *args, **kwargs):
         GAME_RUNNING = True
         PLAYER = MOBS[0]
         DIRECTION = FOLLOW_PLAYER(PLAYER, self)
-        if DIRECTION:
-            if LOCATION_ID(*self.POSITION) == LOCATION_ID(*PLAYER.POSITION):
+        MOB_LOCATION = LOCATION_ID(*self.POSITION)
+        PLAYER_LOCATION = LOCATION_ID(*PLAYER.POSITION)
+        
+        if MOB_LOCATION != PLAYER_LOCATION:
+            pass
+
+        elif DIRECTION:
+            if MOB_LOCATION == PLAYER_LOCATION:
                 START_IN_ROOM = True
             else:
                 START_IN_ROOM = False
@@ -44,16 +59,16 @@ class KAREN(MOB):
                 self.POSITION = NEW_POSITION
                 if LOCATION_ID(*self.POSITION) == LOCATION_ID(*PLAYER.POSITION):
                     if START_IN_ROOM:
-                        input(f"{self.NAME} moved {DIRECTION}.")
+                        print(f"{self.NAME} moved {DIRECTION}.")
                     else:
-                        CURRENT_LOCATION = LOCATION_ID(*NEW_POSITION).DESCRIPTION
+                        CURRENT_LOCATION = LOCATION_ID(*NEW_POSITION)
                         MOB_INDEX = MOBS.index(self)
                         X_DISTANCE, Y_DISTANCE, X_DIRECTION, Y_DIRECTION = RELATIVE_LOCATION(*PLAYER.POSITION, *self.POSITION)
-                        input(f"{self.NAME} (ID: {MOB_INDEX}, HEALTH: {self.HEALTH}/{self.MAX_HEALTH}) entered the {CURRENT_LOCATION}: {X_DISTANCE} feet {X_DIRECTION}, {Y_DISTANCE} feet {Y_DIRECTION}.")
+                        print(f"{self.NAME} (ID: {MOB_INDEX}, HEALTH: {self.HEALTH}/{self.MAX_HEALTH}) entered the {CURRENT_LOCATION.DESCRIPTION}: {X_DISTANCE} feet {X_DIRECTION}, {Y_DISTANCE} feet {Y_DIRECTION}.")
         else:
             try:
-                 ATTACK, GAME_RUNNING = self.COMBAT_CHECK(PLAYER, MOBS)
+                ATTACK, GAME_RUNNING = self.COMBAT_CHECK(PLAYER, MOBS)
             except TypeError as e:
-                 print(f"TypeError: {e}.")
-                 GAME_RUNNING = False
-        return GAME_RUNNING
+                print(f"TypeError: {e}.")
+                GAME_RUNNING = False
+        return GAME_RUNNING, False, TURN

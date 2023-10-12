@@ -7,4 +7,4 @@ def LOCATION_ID(X, Y):
                 GAME_LOCATION.MIN_Y <= Y <= GAME_LOCATION.MAX_Y
             ):
                 return GAME_LOCATION
-        return False
+        return None
