@@ -1,3 +1,5 @@
+
+
 Alpha.1.0:
     - Added Shortsword, Scimitar, Shield, Leather Armor, Chain Mail, Longsword, and Handaxe
     - Player now has Longsword, Shield, and Chain Mail
