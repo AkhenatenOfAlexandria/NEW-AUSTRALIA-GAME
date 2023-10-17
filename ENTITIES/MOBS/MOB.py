@@ -4,6 +4,7 @@ from ENTITIES.ENTITY import ENTITY
 from WORLD.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import ROLL
 from ENTITIES.ITEMS.MELEE_WEAPON import MELEE_WEAPON
+from WORLD.GLOBAL_LISTS import PLAYERS, MOBS, INITIATIVE_MOBS, INITIATIVE_MOB_NAMES, ADD_ENTITY, REMOVE_ENTITY, INITIATIVE
 
 
 class MOB(ENTITY):
@@ -33,6 +34,9 @@ class MOB(ENTITY):
         for stat, value in stats.items():
             setattr(self, f'{stat}', value)
             setattr(self, f'{stat}_MODIFIER', self.MODIFIER(value))
+
+        ADD_ENTITY(self, MOBS)
+        self.MOB_ID = MOBS.index(self)+1
 
         self.MAX_HEALTH = HEALTH + self.CONSTITUTION_MODIFIER
         self.HEALTH = self.MAX_HEALTH
@@ -68,7 +72,7 @@ class MOB(ENTITY):
         return _ARMOR_CLASS
     
     
-    def COMBAT_CHECK(self, ENEMY, MOBS):
+    def COMBAT_CHECK(self, ENEMY):
         ATTACK, GAME_RUNNING = True, True
 
         WEAPON = self.INVENTORY["WEAPON"]
@@ -84,7 +88,7 @@ class MOB(ENTITY):
             _CHECK += self.STRENGTH_MODIFIER
 
         if CHECK == 1:
-            print(f"CRITICAL MISS: {self.NAME} attacked {ENEMY.NAME} and missed.")
+            print(f"{self.NAME} attacked {ENEMY.NAME} and missed.")
             
         elif CHECK == 20 or _CHECK > ENEMY.ARMOR_CLASS:
 
@@ -98,7 +102,7 @@ class MOB(ENTITY):
 
             if ENEMY.HEALTH <= 0:
                 print(f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE.")
-                GAME_RUNNING = ENEMY.DIE(MOBS)
+                GAME_RUNNING = ENEMY.DIE()
                 if hasattr(self, 'EXPERIENCE_LEVEL') and hasattr(ENEMY, 'EXPERIENCE_POINTS'):
                     self.EXPERIENCE += ENEMY.EXPERIENCE_POINTS
                     self.XP_LEVEL()
@@ -112,13 +116,10 @@ class MOB(ENTITY):
         return ATTACK, GAME_RUNNING
     
     
-    def DIE(self, MOBS):
-        MOBS.remove(self)
+    def DIE(self):
+        REMOVE_ENTITY(self)
         print(f"{self.NAME} died.")
-        if self.NAME == "YOU":
-            return False
-        else:
-            return True
+        return True
     
     
     def MOVE(self, DIRECTION, DISTANCE=1):
@@ -136,8 +137,10 @@ class MOB(ENTITY):
             MOVED +=1
             CURRENT_LOCATION = LOCATION_ID(*self.POSITION)
             NEW_LOCATION = LOCATION_ID(X, Y)
+            # print(f"{self.NAME} MOVED {MOVED}/{DISTANCE}")
 
-            if CURRENT_LOCATION != NEW_LOCATION:
+            if self in PLAYERS and CURRENT_LOCATION != NEW_LOCATION:
+                INITIATIVE(self, NEW_LOCATION)
                 break
 
             
@@ -147,6 +150,9 @@ class MOB(ENTITY):
             DOOR_X, DOOR_Y = CURRENT_LOCATION.DOORS[DIRECTION]
             if (DIRECTION in ["NORTH", "SOUTH"] and DOOR_Y == Y) or (DIRECTION in ["EAST", "WEST"] and DOOR_X == X):
                 return X, Y # Move the mob out of the room if he is aligned with the door
-        
 
         return self.POSITION  # Keep the mob in the current position
+
+    def ROLL_INITIATIVE(self, *args):
+        INITIATIVE_ROLL = ROLL(1, 20) + self.DEXTERITY_MODIFIER
+        return INITIATIVE_ROLL

@@ -1,4 +1,24 @@
+Alpha.2.0:
+    Changes:
+        - Player can now switch to a Weapon in his Inventory with USE.
+        - Player and Karen can now attack up to five feet away.
+        - Increased length of each Corridor by 80 feet.
+        - Player and Karen can now move up to 30 feet per turn.
+        - Combat turns now follows initiative order.
+        - Mobs no longer update immediately upon Player entering the room.
 
+    Patches:
+        - Z = 2*Level (each Level is ~10 feet in height)
+        - INVENTORY now displays item names correctly.
+        - Karen IDs are now the same as Mob IDs and consistently unique
+        - Player Name is now "PLAYER 1" instead of "YOU".
+        - Removed "CRITICAL MISS:" from Critical Fail text.
+        - Item names now include Item ID.
+        - Command prompt now specifies Player.
+        - ATTACK command now includes Mob ID in original command.
+        - Move commands now take DISTANCE in Feet.
+        - Move commands now display error messages for invalid DISTANCE.
+        - Slight improvement to Display.
 
 Alpha.1.0:
     - Added Shortsword, Scimitar, Shield, Leather Armor, Chain Mail, Longsword, and Handaxe
@@ -7,9 +27,11 @@ Alpha.1.0:
     - Karen Health now randomly generated
     - Karens no longer spawn in central room, nor move while Player is out of the room
     - Added Levels
+    - Player Health resets with each Level
     - Number of Karens now determined by Level rather than Difficulty
     - Player can now move arbitrary number of spaces in empty room
     - Added Experience Points and Levels gained by killing monsters
+    - Max Player Health increases with Experience Level
     - Player now starts with 10 Gold
     - Minor improvements to Display
 

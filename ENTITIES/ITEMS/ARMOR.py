@@ -1,6 +1,6 @@
-from ENTITIES.ENTITY import ENTITY
+from ENTITIES.ITEMS.ITEM import ITEM
 
-class ARMOR(ENTITY):
+class ARMOR(ITEM):
 
     def __init__(self, ARMOR_CLASS, HEAVY=False, POSITION=None, *args, **kwargs):
         super().__init__(POSITION, *args, **kwargs)

@@ -1,19 +1,23 @@
 from WORLD.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import RELATIVE_LOCATION
+from WORLD.GLOBAL_LISTS import MOBS, PLAYERS
 
-def GAME_DISPLAY(MOBS, LEVEL, TURN):
+def GAME_DISPLAY(PLAYER):
+    MOB_NAMES = []
     for MOB in MOBS:
-        if MOB.NAME == "YOU":
-            if TURN:
-                print(f"\nTURN: {TURN}")
-                print(f"LEVEL: {LEVEL}")
-                CURRENT_LOCATION = LOCATION_ID(*MOB.POSITION)
-                print(f"HEALTH: {MOB.HEALTH}/{MOB.MAX_HEALTH}.")
-                print(f"ARMOR CLASS: {MOB.ARMOR_CLASS}")
-                print(f"LOCATION: {MOB.POSITION}")
-                print(f"You are in a {CURRENT_LOCATION.DESCRIPTION}.{CURRENT_LOCATION.DESCRIBE_LOCATION(MOB)}")
-        elif LOCATION_ID(*MOB.POSITION) == LOCATION_ID(*MOBS[0].POSITION):
-            MOB_INDEX = MOBS.index(MOB)
+        if MOB:
+            MOB_NAMES.append(MOB.NAME)
+        else:
+            MOB_NAMES.append(MOB)
+        if MOB == PLAYER:
+            CURRENT_LOCATION = LOCATION_ID(*MOB.POSITION)
+            print(f"\nHEALTH: {MOB.HEALTH}/{MOB.MAX_HEALTH}.")
+            print(f"ARMOR CLASS: {MOB.ARMOR_CLASS}")
+            print(f"LOCATION: {MOB.POSITION}")
+            print(f"{MOB.NAME} is in a {CURRENT_LOCATION.DESCRIPTION}.{CURRENT_LOCATION.DESCRIBE_LOCATION(MOB)}")
+        elif MOB and LOCATION_ID(*MOB.POSITION) == LOCATION_ID(*MOBS[0].POSITION):
+            MOB_INDEX = MOBS.index(MOB)+1
             X_DISTANCE, Y_DISTANCE, X_DIRECTION, Y_DIRECTION = RELATIVE_LOCATION(*MOBS[0].POSITION, *MOB.POSITION)
-            print(f"\t{MOB.NAME} (ID: {MOB_INDEX}, HEALTH: {MOB.HEALTH}/{MOB.MAX_HEALTH}, ARMOR CLASS: {MOB.ARMOR_CLASS}): {Y_DISTANCE} feet {Y_DIRECTION}, {X_DISTANCE} feet {X_DIRECTION}.")
+            print(f"\t{MOB.NAME} (ID: {MOB_INDEX}, HEALTH: {MOB.HEALTH}/{MOB.MAX_HEALTH}, ARMOR CLASS: {MOB.ARMOR_CLASS}): {X_DISTANCE*5} feet {X_DIRECTION}, {Y_DISTANCE*5} feet {Y_DIRECTION}.")
+    # print(len(MOBS), MOB_NAMES)
     

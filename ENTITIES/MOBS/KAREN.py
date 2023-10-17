@@ -1,9 +1,10 @@
 from ENTITIES.MOBS.MOB import MOB
-from ENTITIES.MOBS.AI.FOLLOW_PLAYER import FOLLOW_PLAYER
+import ENTITIES.MOBS.AI.FOLLOW_PLAYER as FOLLOW_PLAYER
 from WORLD.LOCATION_ID import LOCATION_ID
-from LOGIC.MATH import RELATIVE_LOCATION
+from LOGIC.MATH import MELEE_RANGE
 from ENTITIES.ITEMS.SCIMITAR import SCIMITAR
 from ENTITIES.ITEMS.LEATHER_ARMOR import LEATHER_ARMOR
+from WORLD.GLOBAL_LISTS import MOBS
 
 
 class KAREN(MOB):
@@ -30,45 +31,36 @@ class KAREN(MOB):
             HEALTH,
             *args, **kwargs
             )
-           self.NAME = "KAREN"
+           self.NAME = f"KAREN.{self.MOB_ID}"
            self.INVENTORY["WEAPON"] = SCIMITAR()
            self.INVENTORY["SHIELD"] = True
            self.INVENTORY["ARMOR"] = LEATHER_ARMOR()
            self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
 
            self.EXPERIENCE_POINTS = 50
+
+           self.SPEED = 6
     
 
-    def UPDATE(self, MOBS, TURN, *args, **kwargs):
+    def UPDATE(self, TURN, *args, **kwargs):
         GAME_RUNNING = True
         PLAYER = MOBS[0]
-        DIRECTION = FOLLOW_PLAYER(PLAYER, self)
+        DIRECTION = FOLLOW_PLAYER.DIRECTION(PLAYER, self)
         MOB_LOCATION = LOCATION_ID(*self.POSITION)
         PLAYER_LOCATION = LOCATION_ID(*PLAYER.POSITION)
         
         if MOB_LOCATION != PLAYER_LOCATION:
             pass
 
-        elif DIRECTION:
-            if MOB_LOCATION == PLAYER_LOCATION:
-                START_IN_ROOM = True
-            else:
-                START_IN_ROOM = False
-            NEW_POSITION = self.MOVE(DIRECTION)
-            if NEW_POSITION != self.POSITION:
-                self.POSITION = NEW_POSITION
-                if LOCATION_ID(*self.POSITION) == LOCATION_ID(*PLAYER.POSITION):
-                    if START_IN_ROOM:
-                        print(f"{self.NAME} moved {DIRECTION}.")
-                    else:
-                        CURRENT_LOCATION = LOCATION_ID(*NEW_POSITION)
-                        MOB_INDEX = MOBS.index(self)
-                        X_DISTANCE, Y_DISTANCE, X_DIRECTION, Y_DIRECTION = RELATIVE_LOCATION(*PLAYER.POSITION, *self.POSITION)
-                        print(f"{self.NAME} (ID: {MOB_INDEX}, HEALTH: {self.HEALTH}/{self.MAX_HEALTH}) entered the {CURRENT_LOCATION.DESCRIPTION}: {X_DISTANCE} feet {X_DIRECTION}, {Y_DISTANCE} feet {Y_DIRECTION}.")
-        else:
+        elif MELEE_RANGE(*self.POSITION, *PLAYER.POSITION):
             try:
-                ATTACK, GAME_RUNNING = self.COMBAT_CHECK(PLAYER, MOBS)
+                ATTACK, GAME_RUNNING = self.COMBAT_CHECK(PLAYER)
             except TypeError as e:
                 print(f"TypeError: {e}.")
                 GAME_RUNNING = False
+        
+        elif DIRECTION:
+            # print(f"{self.NAME} attempting to move {DIRECTION}.")
+            FOLLOW_PLAYER.MOVE(PLAYER, self, DIRECTION)
+
         return GAME_RUNNING, False, TURN

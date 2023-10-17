@@ -44,8 +44,8 @@ def SLOPE(X0, X1, Y0, Y1):
     return (Y1-Y0)/(X1-X0)
 
 def RELATIVE_LOCATION(X0, Y0, X1, Y1):
-    X_DISTANCE = abs(X1-X0)*5
-    Y_DISTANCE = abs(Y1-Y0)*5
+    X_DISTANCE = abs(X1-X0)
+    Y_DISTANCE = abs(Y1-Y0)
     if X1-X0 >= 0:
         X_DIRECTION = "SOUTH"
     else:
@@ -55,4 +55,21 @@ def RELATIVE_LOCATION(X0, Y0, X1, Y1):
     else:
         Y_DIRECTION = "WEST"
     return X_DISTANCE, Y_DISTANCE, X_DIRECTION, Y_DIRECTION
-    
+
+
+def DISTANCE(X1, Y1, X2, Y2):
+    DX = X2 - X1
+    DY = Y2 - Y1
+    return math.sqrt(DX**2 + DY**2)
+
+
+def MELEE_RANGE(MOB_X, MOB_Y, ENEMY_X, ENEMY_Y, REACH=1):
+    X_DISTANCE = abs(ENEMY_X - MOB_X)
+    Y_DISTANCE = abs(ENEMY_Y - MOB_Y)
+    _DISTANCE = DISTANCE(MOB_X, MOB_Y, ENEMY_X, ENEMY_Y)
+
+    if X_DISTANCE <= REACH and Y_DISTANCE <= REACH:
+        return True
+    elif _DISTANCE <= REACH:
+        return True
+    return False
