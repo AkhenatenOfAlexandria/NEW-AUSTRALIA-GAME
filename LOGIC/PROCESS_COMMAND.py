@@ -23,11 +23,11 @@ def MOVE_PLAYER(PLAYER, COMMAND):
             DISTANCE = 1
 
         POSITION = PLAYER.MOVE(DIRECTION, DISTANCE)
-        if POSITION == PLAYER.POSITION:
+        if POSITION == PLAYER.POSITION[0:2]:
             print("There is a wall in your path.")
         else:
             print(f"Moved {DISTANCE*5} feet {DIRECTION}.")
-            TEMP_X, TEMP_Y = PLAYER.POSITION
+            TEMP_X, TEMP_Y = PLAYER.POSITION[0:2]
             NEW_X, NEW_Y = POSITION
             if TEMP_X == NEW_X:
                 COORDINATE = 1
@@ -51,7 +51,7 @@ def MOVE_PLAYER(PLAYER, COMMAND):
             for i in range(_RANGE):
                 for index, mob in enumerate(MOBS):
                     CHECK1 = MOB_CHECKS[index]
-                    if mob and mob != PLAYER and MELEE_RANGE(*mob.POSITION, *TEMP_POSITION):
+                    if mob and mob != PLAYER and MELEE_RANGE(*mob.POSITION[0:2], *TEMP_POSITION[0:2]):
                         MOB_CHECKS[index] = True
                     else:
                         MOB_CHECKS[index] = False
@@ -94,7 +94,7 @@ def OPEN_INVENTORY(PLAYER):
 
 
 def ATTACK(PLAYER, COMMAND):
-    POSITION = PLAYER.POSITION
+    POSITION = PLAYER.POSITION[0:2]
     PARTS = COMMAND.split()
     try:
         TARGET_ID = int(PARTS[1])-1
@@ -104,7 +104,7 @@ def ATTACK(PLAYER, COMMAND):
                 print("Invalid TARGET. Enter the ID of the mob you want to attack.")    
             elif TARGET == PLAYER:
                 print("You cannot attack yourself.")
-            elif MELEE_RANGE(*PLAYER.POSITION, *TARGET.POSITION):
+            elif MELEE_RANGE(*PLAYER.POSITION[0:2], *TARGET.POSITION[0:2]):
                 ATTACK, GAME_RUNNING = PLAYER.COMBAT_CHECK(TARGET)
                 return GAME_RUNNING, POSITION
             else:
@@ -145,7 +145,7 @@ def USE_ITEM(PLAYER, COMMAND):
 
 
 def PROCESS_COMMAND(PLAYER):
-    POSITION = PLAYER.POSITION
+    POSITION = PLAYER.POSITION[0:2]
     RETURN = None
 
     while True:  # Keep looping until a valid command is entered

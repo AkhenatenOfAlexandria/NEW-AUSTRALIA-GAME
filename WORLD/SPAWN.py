@@ -5,13 +5,16 @@ from WORLD.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import ROLL
 import WORLD.GAME_WORLD as _WORLD
 from WORLD.GLOBAL_LISTS import PLAYERS, MOBS, REMOVE_ENTITY
+from LOGIC.GLOBAL_FLAGS import GLOBAL_FLAGS
 
 
 def SPAWN(KAREN_COUNT):
+    global GLOBAL_FLAGS
+    LEVEL, REALM = GLOBAL_FLAGS["LEVEL"], GLOBAL_FLAGS["REALM"]
 
     print("LOADING LEVEL...")
     for PLAYER in PLAYERS:
-        PLAYER.POSITION = (0, 0)
+        PLAYER.POSITION = [0, 0, LEVEL, REALM]
         PLAYER.XP_LEVEL()
         PLAYER.HEALTH = PLAYER.MAX_HEALTH
 
@@ -24,7 +27,7 @@ def SPAWN(KAREN_COUNT):
         for i in range(KAREN_COUNT):
             _LOCATION = None
             while not _LOCATION or _LOCATION == _WORLD.CENTRAL_ROOM:
-                _POSITION = (random.randint(-15, 15), random.randint(-15, 15))
-                _LOCATION = LOCATION_ID(*_POSITION) 
+                _POSITION = [random.randint(-15, 15), random.randint(-15, 15), LEVEL*2, REALM]
+                _LOCATION = LOCATION_ID(*_POSITION[0:2]) 
             _KAREN = KAREN(_POSITION, HEALTH=ROLL(2, 6))
     

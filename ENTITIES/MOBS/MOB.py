@@ -80,11 +80,9 @@ class MOB(ENTITY):
         ATTACK, GAME_RUNNING = True, True
 
         WEAPON = self.INVENTORY["WEAPON"]
-
-        PROFICIENCY = 2
-
+        _PROFICIENCY = self.PROFICIENCY
         CHECK = ROLL(1, 20)
-        _CHECK = CHECK + PROFICIENCY
+        _CHECK = CHECK + _PROFICIENCY
         
         if WEAPON and "FINESSE" in WEAPON.ATTRIBUTES:
             _CHECK += max(self.STRENGTH_MODIFIER, self.DEXTERITY_MODIFIER)
@@ -99,8 +97,8 @@ class MOB(ENTITY):
             if CHECK == 20:
                 print(f"CRITICAL HIT:")
             DAMAGE = (
-                ROLL(*WEAPON.DAMAGE) + PROFICIENCY if isinstance(WEAPON, MELEE_WEAPON)
-                else max(0, self.STRENGTH_MODIFIER + PROFICIENCY)
+                ROLL(*WEAPON.DAMAGE) + _PROFICIENCY if isinstance(WEAPON, MELEE_WEAPON)
+                else max(0, self.STRENGTH_MODIFIER + _PROFICIENCY)
             )
             ENEMY.HEALTH -= DAMAGE
 
@@ -126,7 +124,7 @@ class MOB(ENTITY):
     
     
     def MOVE(self, DIRECTION, DISTANCE=1):
-        X, Y = self.POSITION
+        X, Y = self.POSITION[0:2]
         MOVED = 0
         while MOVED < DISTANCE:
             if DIRECTION == "NORTH":
@@ -138,7 +136,7 @@ class MOB(ENTITY):
             elif DIRECTION == "WEST":
                 Y -= 1
             MOVED +=1
-            CURRENT_LOCATION = LOCATION_ID(*self.POSITION)
+            CURRENT_LOCATION = LOCATION_ID(*self.POSITION[0:2])
             NEW_LOCATION = LOCATION_ID(X, Y)
             # print(f"{self.NAME} MOVED {MOVED}/{DISTANCE}")
 
@@ -154,7 +152,7 @@ class MOB(ENTITY):
             if (DIRECTION in ["NORTH", "SOUTH"] and DOOR_Y == Y) or (DIRECTION in ["EAST", "WEST"] and DOOR_X == X):
                 return X, Y # Move the mob out of the room if he is aligned with the door
 
-        return self.POSITION  # Keep the mob in the current position
+        return self.POSITION[0:2]  # Keep the mob in the current position
 
     def ROLL_INITIATIVE(self, *args):
         INITIATIVE_ROLL = ROLL(1, 20) + self.DEXTERITY_MODIFIER

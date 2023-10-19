@@ -30,30 +30,9 @@ def REMOVE_ENTITY(ENTITY):
 def INITIATIVE(PLAYER, LOCATION):
     
     _MOBS = []
-
-    '''_MOBS_DICT = {}
     
-    for PLAYER in PLAYERS:
-        _MOBS[PLAYER] = None
-        _MOBS.append(PLAYER)
-    for LIST in NPM_TYPES:
-        _MOBS[LIST] = None
-        for MOB in LIST:
-            _MOBS.append(MOB)
-    
-    for key in _MOBS_DICT.keys():
-        if key in PLAYERS:
-            _MOBS_DICT[key] = key.ROLL_INITIATIVE()
-        elif key in NPM_TYPES:
-            _INITIATIVE = key[0].ROLL_INITIATIVE()
-            for MOB in key:
-                _MOBS_DICT[MOB] = _INITIATIVE
-            _MOBS_DICT.pop(key, None)
-    
-    _INITIATIVE_MOBS = sorted(_MOBS, key=lambda mob: _MOBS_DICT[mob])'''
-
     for MOB in MOBS:
-        if MOB and (LOCATION_ID(*MOB.POSITION) == LOCATION or MOB == PLAYER):
+        if MOB and (LOCATION_ID(*MOB.POSITION[0:2]) == LOCATION or MOB == PLAYER):
             _MOBS.append(MOB)
     
     _INITIATIVE_MOBS = sorted(_MOBS, key=lambda mob: mob.ROLL_INITIATIVE())

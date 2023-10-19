@@ -1,3 +1,6 @@
+Alpha 0.2.2:
+    - Position now includes Z and W.
+
 Alpha 0.2.1:
     - Improved explanation of movement.
     - Added Inventory command to Introduction.

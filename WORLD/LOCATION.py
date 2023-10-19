@@ -18,7 +18,7 @@ class LOCATION:
         self.ENTITIES.remove(ENTITY)
     
     def DESCRIBE_LOCATION(self, PLAYER):
-        X, Y = PLAYER.POSITION
+        X, Y = PLAYER.POSITION[0:2]
         LENGTH_X = (self.MAX_X - self.MIN_X)*5
         LENGTH_Y = (self.MAX_Y - self.MIN_Y)*5
         NORTH = (X-self.MIN_X)*5
@@ -29,7 +29,7 @@ class LOCATION:
         DESCRIPTION = f"\n\tThe {self.DESCRIPTION} is {LENGTH_X} feet by {LENGTH_Y} feet. The walls are {NORTH} feet NORTH, {SOUTH} feet SOUTH, {EAST} feet EAST, and {WEST} feet WEST."
 
         for key, value in self.DOORS.items():
-            X_DISTANCE, Y_DISTANCE, X_DIRECTION, Y_DIRECTION = RELATIVE_LOCATION(*PLAYER.POSITION, *value)
+            X_DISTANCE, Y_DISTANCE, X_DIRECTION, Y_DIRECTION = RELATIVE_LOCATION(X, Y, *value)
             X_DISTANCE, Y_DISTANCE = f"{X_DISTANCE*5} feet", f"{Y_DISTANCE*5} feet"
 
             DESCRIPTION += f" The {key} DOOR is {X_DISTANCE} {X_DIRECTION}, {Y_DISTANCE} {Y_DIRECTION}."

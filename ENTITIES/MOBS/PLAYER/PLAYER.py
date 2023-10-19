@@ -5,17 +5,17 @@ from ENTITIES.MOBS.MOB import MOB
 from LOGIC.PROCESS_COMMAND import PROCESS_COMMAND
 import WORLD.GAME_WORLD as _WORLD
 from WORLD.LOCATION_ID import LOCATION_ID
-from LOGIC.MATH import RELATIVE_LOCATION
 from LOGIC.MATH import ROLL
-from WORLD.GLOBAL_LISTS import MOBS, PLAYERS, ADD_ENTITY, REMOVE_ENTITY
+from WORLD.GLOBAL_LISTS import MOBS, PLAYERS, ADD_ENTITY
 from WORLD.GAME_DISPLAY import GAME_DISPLAY, MOB_INFO
+from LOGIC.GLOBAL_FLAGS import GLOBAL_FLAGS, UPDATE_FLAG
 
 
 class PLAYER(MOB):
 
     def __init__(
             self,
-            POSITION=(0,0),
+            POSITION=[0,0,0,0],
             STRENGTH=16,
             DEXTERITY=14,
             CONSTITUTION=15,
@@ -100,32 +100,34 @@ class PLAYER(MOB):
     
     def ROOM_CHECK(self):
         for mob in MOBS:
-            if mob and LOCATION_ID(*mob.POSITION) == LOCATION_ID(*self.POSITION) and mob != self:
+            if mob and LOCATION_ID(*mob.POSITION[0:2]) == LOCATION_ID(*self.POSITION[0:2]) and mob != self:
                 return True
         return False
 
 
-    def UPDATE(self, TURN, LEVEL, *args, **kwargs):
+    def UPDATE(self, *args, **kwargs):
+        global GLOBAL_FLAGS
+
         GAME_DISPLAY(self)
         LEVEL_COMPLETE = False
-        _TURN = TURN
-        OLD_POSITION = self.POSITION
-        GAME_RUNNING, self.POSITION = PROCESS_COMMAND(self)
-        NEW_LOCATION = LOCATION_ID(*self.POSITION)
+        TURN = GLOBAL_FLAGS["TURN"]
+        OLD_POSITION = self.POSITION[0:2]
+        GAME_RUNNING, self.POSITION[0:2] = PROCESS_COMMAND(self)
+        NEW_LOCATION = LOCATION_ID(*self.POSITION[0:2])
         if not NEW_LOCATION:
             print(f"ERROR: {self.POSITION} undefined.")
-        elif NEW_LOCATION != _WORLD.VICTORY and NEW_LOCATION != LOCATION_ID(*OLD_POSITION):
+        elif NEW_LOCATION != _WORLD.VICTORY and NEW_LOCATION != LOCATION_ID(*OLD_POSITION[0:2]):
             print(f"{self.NAME} entered a {NEW_LOCATION.DESCRIPTION}.{NEW_LOCATION.DESCRIBE_LOCATION(self)}")
             for mob in MOBS:
-                if mob and mob != self and LOCATION_ID(*mob.POSITION) == LOCATION_ID(*self.POSITION):
+                if mob and mob != self and LOCATION_ID(*mob.POSITION[0:2]) == LOCATION_ID(*self.POSITION[0:2]):
                     _MOB_INFO = MOB_INFO(self, mob)
                     print(_MOB_INFO)
         elif NEW_LOCATION == _WORLD.VICTORY:
             print(f"\nLevel complete!\n")
             input(f"End of TURN {TURN}. ENTER to continue.\n")
-            _TURN += 1
+            TURN = UPDATE_FLAG("TURN", TURN+1)
             LEVEL_COMPLETE = True
-        return GAME_RUNNING, LEVEL_COMPLETE, _TURN
+        return GAME_RUNNING, LEVEL_COMPLETE
     
     def DIE(self):
         if self not in MOBS:

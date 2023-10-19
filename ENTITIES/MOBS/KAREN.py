@@ -5,12 +5,13 @@ from LOGIC.MATH import MELEE_RANGE
 from ENTITIES.ITEMS.SCIMITAR import SCIMITAR
 from ENTITIES.ITEMS.LEATHER_ARMOR import LEATHER_ARMOR
 from WORLD.GLOBAL_LISTS import MOBS
+from LOGIC.GLOBAL_FLAGS import GLOBAL_FLAGS
 
 
 class KAREN(MOB):
     def __init__(
             self,
-            POSITION,
+            POSITION=[0,0],
             STRENGTH=8,
             DEXTERITY=14,
             CONSTITUTION=10,
@@ -44,17 +45,19 @@ class KAREN(MOB):
            self.SPEED = 6
     
 
-    def UPDATE(self, TURN, *args, **kwargs):
+    def UPDATE(self, *args, **kwargs):
+        global GLOBAL_FLAGS
+        TURN = GLOBAL_FLAGS["TURN"]
         GAME_RUNNING = True
         PLAYER = MOBS[0]
         DIRECTION = FOLLOW_PLAYER.DIRECTION(PLAYER, self)
-        MOB_LOCATION = LOCATION_ID(*self.POSITION)
-        PLAYER_LOCATION = LOCATION_ID(*PLAYER.POSITION)
+        MOB_LOCATION = LOCATION_ID(*self.POSITION[0:2])
+        PLAYER_LOCATION = LOCATION_ID(*PLAYER.POSITION[0:2])
         
         if MOB_LOCATION != PLAYER_LOCATION:
             pass
 
-        elif MELEE_RANGE(*self.POSITION, *PLAYER.POSITION):
+        elif MELEE_RANGE(*self.POSITION[0:2], *PLAYER.POSITION[0:2]):
             try:
                 ATTACK, GAME_RUNNING = self.COMBAT_CHECK(PLAYER)
             except TypeError as e:
@@ -65,4 +68,4 @@ class KAREN(MOB):
             # print(f"{self.NAME} attempting to move {DIRECTION}.")
             FOLLOW_PLAYER.MOVE(PLAYER, self, DIRECTION)
 
-        return GAME_RUNNING, False, TURN
+        return GAME_RUNNING, False
