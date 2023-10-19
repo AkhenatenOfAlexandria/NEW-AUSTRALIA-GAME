@@ -12,6 +12,7 @@ def SPAWN(KAREN_COUNT):
     print("LOADING LEVEL...")
     for PLAYER in PLAYERS:
         PLAYER.POSITION = (0, 0)
+        PLAYER.XP_LEVEL()
         PLAYER.HEALTH = PLAYER.MAX_HEALTH
 
     for MOB in MOBS:

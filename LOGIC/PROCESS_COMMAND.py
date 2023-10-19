@@ -98,9 +98,11 @@ def ATTACK(PLAYER, COMMAND):
     PARTS = COMMAND.split()
     try:
         TARGET_ID = int(PARTS[1])-1
-        if 0 <= TARGET_ID < len(MOBS):
+        if 0 < TARGET_ID < len(MOBS):
             TARGET = MOBS[TARGET_ID]
-            if TARGET == PLAYER:
+            if not TARGET:
+                print("Invalid TARGET. Enter the ID of the mob you want to attack.")    
+            elif TARGET == PLAYER:
                 print("You cannot attack yourself.")
             elif MELEE_RANGE(*PLAYER.POSITION, *TARGET.POSITION):
                 ATTACK, GAME_RUNNING = PLAYER.COMBAT_CHECK(TARGET)
@@ -168,9 +170,9 @@ def PROCESS_COMMAND(PLAYER):
 
         elif COMMAND == "HELP":
             print("The objective is to escape the dungeon without being killed by the monsters.")
-            print("To move, enter NORTH, SOUTH, EAST, or WEST.")
+            print("To move, enter NORTH, SOUTH, EAST, or WEST and the number of feet you want to move.")
             print("To pass, enter LOOK.")
-            print("To check inventory, enter INVENTORY.")
+            print("To open inventory, enter INVENTORY.")
             print("To attack a monster, enter ATTACK.")
             print("To exit the game, enter QUIT.")
             print("For help, enter HELP.")

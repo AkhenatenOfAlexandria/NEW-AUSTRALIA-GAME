@@ -18,9 +18,11 @@ class MOB(ENTITY):
             WISDOM,
             CHARISMA,
             HEALTH,
+            TYPE,
+            PROFICIENCY=0,
             *args, **kwargs
             ):
-        super().__init__(POSITION, *args, **kwargs)
+        super().__init__(TYPE, POSITION, *args, **kwargs)
 
         stats = {
             'STRENGTH': STRENGTH,
@@ -36,7 +38,9 @@ class MOB(ENTITY):
             setattr(self, f'{stat}_MODIFIER', self.MODIFIER(value))
 
         ADD_ENTITY(self, MOBS)
+        
         self.MOB_ID = MOBS.index(self)+1
+        self.NAME = f"{self.TYPE}.{self.MOB_ID}"
 
         self.MAX_HEALTH = HEALTH + self.CONSTITUTION_MODIFIER
         self.HEALTH = self.MAX_HEALTH
@@ -44,7 +48,7 @@ class MOB(ENTITY):
         self.INVENTORY = {"WEAPON": None, "ARMOR": None, "SHIELD": False, "GOLD": 0.0, "ITEMS":[]}
         
         self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
-        
+        self.PROFICIENCY = PROFICIENCY
     
 
     def MODIFIER(self, ATTRIBUTE):
@@ -105,7 +109,6 @@ class MOB(ENTITY):
                 GAME_RUNNING = ENEMY.DIE()
                 if hasattr(self, 'EXPERIENCE_LEVEL') and hasattr(ENEMY, 'EXPERIENCE_POINTS'):
                     self.EXPERIENCE += ENEMY.EXPERIENCE_POINTS
-                    self.XP_LEVEL()
 
             else:
                 print(f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE (HEALTH: {ENEMY.HEALTH}/{ENEMY.MAX_HEALTH}).")

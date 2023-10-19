@@ -8,7 +8,7 @@ from WORLD.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import RELATIVE_LOCATION
 from LOGIC.MATH import ROLL
 from WORLD.GLOBAL_LISTS import MOBS, PLAYERS, ADD_ENTITY, REMOVE_ENTITY
-from WORLD.GAME_DISPLAY import GAME_DISPLAY
+from WORLD.GAME_DISPLAY import GAME_DISPLAY, MOB_INFO
 
 
 class PLAYER(MOB):
@@ -35,12 +35,16 @@ class PLAYER(MOB):
             WISDOM,
             CHARISMA,
             HEALTH,
+            "PLAYER",
+            2,
             "DEFENSE",
             *args, **kwargs
             )
         
         ADD_ENTITY(self, PLAYERS)
+
         self.NAME = f"PLAYER {self.MOB_ID}"
+
         self.INVENTORY["WEAPON"] = LONGSWORD()
         self.INVENTORY["SHIELD"] = True
         self.INVENTORY["ARMOR"] = CHAIN_MAIL()
@@ -113,10 +117,9 @@ class PLAYER(MOB):
         elif NEW_LOCATION != _WORLD.VICTORY and NEW_LOCATION != LOCATION_ID(*OLD_POSITION):
             print(f"{self.NAME} entered a {NEW_LOCATION.DESCRIPTION}.{NEW_LOCATION.DESCRIBE_LOCATION(self)}")
             for mob in MOBS:
-                if mob and mob != self and LOCATION_ID(*mob.POSITION) == LOCATION_ID(*MOBS[0].POSITION):
-                    MOB_INDEX = MOBS.index(self)
-                    X_DISTANCE, Y_DISTANCE, X_DIRECTION, Y_DIRECTION = RELATIVE_LOCATION(*MOBS[0].POSITION, *mob.POSITION)
-                    print(f"\t{mob.NAME} (ID: {MOB_INDEX}, HEALTH: {mob.HEALTH}/{mob.MAX_HEALTH}): {X_DISTANCE*5} feet {X_DIRECTION}, {Y_DISTANCE*5} feet {Y_DIRECTION}.")
+                if mob and mob != self and LOCATION_ID(*mob.POSITION) == LOCATION_ID(*self.POSITION):
+                    _MOB_INFO = MOB_INFO(self, mob)
+                    print(_MOB_INFO)
         elif NEW_LOCATION == _WORLD.VICTORY:
             print(f"\nLevel complete!\n")
             input(f"End of TURN {TURN}. ENTER to continue.\n")
@@ -125,7 +128,7 @@ class PLAYER(MOB):
         return GAME_RUNNING, LEVEL_COMPLETE, _TURN
     
     def DIE(self):
-        if self in MOBS:
-            REMOVE_ENTITY(self)
+        if self not in MOBS:
+            ADD_ENTITY(self)
         print(f"{self.NAME} died.")
         return False

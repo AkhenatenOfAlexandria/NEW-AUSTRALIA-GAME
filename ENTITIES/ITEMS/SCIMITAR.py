@@ -4,6 +4,5 @@ from WORLD.GLOBAL_LISTS import ITEMS
 class SCIMITAR(MELEE_WEAPON):
 
     def __init__(self, POSITION=None):
-        super().__init__((1, 6), POSITION, "FINESSE")
-
-        self.NAME = f"SCIMITAR.{self.ITEM_ID}"
+        super().__init__((1, 6), "SCIMITAR", POSITION, "FINESSE")
+        

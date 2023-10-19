@@ -1,4 +1,13 @@
-Alpha.2.0:
+Alpha 0.2.1:
+    - Improved explanation of movement.
+    - Added Inventory command to Introduction.
+    - Player now levels up at end of Level instead of immediately.
+    - Mob information now includes Weapons, Shields, and Armor.
+    - Location information now includes location of Doors.
+    - Attacking a dead mob now displays Error instead of crashing.
+    - GAME OVER now displays Score (Player Experience Level).
+
+Alpha 0.2.0:
     Changes:
         - Player can now switch to a Weapon in his Inventory with USE.
         - Player and Karen can now attack up to five feet away.
@@ -20,7 +29,7 @@ Alpha.2.0:
         - Move commands now display error messages for invalid DISTANCE.
         - Slight improvement to Display.
 
-Alpha.1.0:
+Alpha 0.1.0:
     - Added Shortsword, Scimitar, Shield, Leather Armor, Chain Mail, Longsword, and Handaxe
     - Player now has Longsword, Shield, and Chain Mail
     - Karen now has Scimitar, Shield, and Leather Armor
@@ -35,7 +44,7 @@ Alpha.1.0:
     - Player now starts with 10 Gold
     - Minor improvements to Display
 
-Alpha.0.1:
+Alpha 0.0.1:
     - Room descriptions display slightly differently
     - More information when a mob enters a room or player changes rooms
     - Difficulty can now be 0

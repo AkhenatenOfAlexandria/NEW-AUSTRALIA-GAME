@@ -7,7 +7,7 @@ from WORLD.GLOBAL_LISTS import PLAYERS, INITIATIVE_MOBS
 
 def GAME():
     GAME_RUNNING = True
-    VERSION = "ALPHA.2.0"
+    VERSION = "ALPHA 0.2.1"
     INTRODUCTION(VERSION)
 
     PLAYER_COUNT = 1
@@ -49,5 +49,8 @@ def GAME():
 
         LEVEL += 1
 
-    print(f"\nGAME OVER.\nHIGHEST LEVEL: {LEVEL}\n")
+    SCORE = 0
+    for player in PLAYERS:
+         SCORE += player.EXPERIENCE
+    print(f"\nGAME OVER.\nHIGHEST LEVEL: {LEVEL}\nSCORE: {SCORE}\n")
     print(f"Thank you for playing New Australia: The Game {VERSION} by John-Mary Knight.")

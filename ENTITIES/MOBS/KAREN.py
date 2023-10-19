@@ -29,9 +29,11 @@ class KAREN(MOB):
             WISDOM,
             CHARISMA,
             HEALTH,
+            "KAREN",
+            2,
             *args, **kwargs
             )
-           self.NAME = f"KAREN.{self.MOB_ID}"
+           
            self.INVENTORY["WEAPON"] = SCIMITAR()
            self.INVENTORY["SHIELD"] = True
            self.INVENTORY["ARMOR"] = LEATHER_ARMOR()
