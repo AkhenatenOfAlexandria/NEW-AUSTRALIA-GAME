@@ -1,6 +1,7 @@
 import math
 import random
 
+
 def VECTOR_DIRECTION_RADIANS(X, Y):   
     # Calculate the angle in radians using atan2
     angle_radians = math.atan2(X, Y)
@@ -38,6 +39,16 @@ def POSITION_CORNERS(X, Y):
     LOWER_LEFT_CORNER = (X*5-2.5, Y*5-2.5)
     CORNERS = (UPPER_LEFT_CORNER, UPPER_RIGHT_CORNER, LOWER_RIGHT_CORNER, LOWER_LEFT_CORNER)
     return CORNERS
+
+
+def OVERLAP(A, B):
+    AX1, AY1, AX2, AY2 = A
+    BX1, BY1, BX2, BY2 = B
+
+    if AX1 >= BX2 or AY1 >= BY2 or AX2 <= BX1 or AY2 <= BY1:
+        return False
+    else:
+        return True
 
 
 def SLOPE(X0, X1, Y0, Y1):

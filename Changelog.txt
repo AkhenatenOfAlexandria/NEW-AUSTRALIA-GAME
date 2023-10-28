@@ -1,3 +1,26 @@
+Alpha 0.3.0:
+    Changes:
+        - Player and Karen now start with empty Inventory (except the Player's Gold).
+        - Added Chests.
+        - Player can open and close Chests and interact with its contents.
+        - Player can now use Armor in Inventory.
+        - Map is now randomly generated. Each Level has one more Room than the previous.
+        - Karen now moves more like the Player during Combat.
+    
+    Patches:
+        - Improved Room Display.
+        - Debugged Debug.
+        - Extended Karen spawn radius.
+
+Alpha 0.2.4:
+    - Console now clears after each turn.
+    - Actually removed debug from Display.
+
+
+Alpha 0.2.3:
+    - Removed debug from Display.
+    
+
 Alpha 0.2.2:
     - Position now includes Z and W.
 

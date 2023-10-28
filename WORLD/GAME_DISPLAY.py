@@ -1,7 +1,9 @@
-from WORLD.LOCATION_ID import LOCATION_ID
+from WORLD.LOCATIONS.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import RELATIVE_LOCATION
-from WORLD.GLOBAL_LISTS import MOBS
-from LOGIC.GLOBAL_FLAGS import GLOBAL_FLAGS
+from WORLD.GLOBAL import MOBS, GLOBAL_FLAGS, DISPLAY, UPDATE_DISPLAY, CLEAR_DISPLAY
+import logging
+logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+
 
 def MOB_INFO(PLAYER, MOB):
     X_DISTANCE, Y_DISTANCE, X_DIRECTION, Y_DIRECTION = RELATIVE_LOCATION(*PLAYER.POSITION[0:2], *MOB.POSITION[0:2])
@@ -22,8 +24,11 @@ def MOB_INFO(PLAYER, MOB):
 
 
 def GAME_DISPLAY(PLAYER):
-    global GLOBAL_FLAGS
+    global GLOBAL_FLAGS, DISPLAY
     LEVEL, REALM = GLOBAL_FLAGS["LEVEL"], GLOBAL_FLAGS["REALM"]
+    DEBUG = GLOBAL_FLAGS["DEBUG"]
+    _INDEX = PLAYER.MOB_ID-1
+
     # MOB_NAMES = []
     for MOB in MOBS:
         '''if MOB:
@@ -31,15 +36,25 @@ def GAME_DISPLAY(PLAYER):
         else:
             MOB_NAMES.append(MOB)'''
         if MOB == PLAYER:
-            print(LEVEL, REALM)
-            _POSITION = (*PLAYER.POSITION[0:2], LEVEL*2, REALM)
+            if DEBUG:
+                logging.debug(f"{LEVEL}, {REALM}")
+            _COORDINATES = PLAYER.POSITION
             CURRENT_LOCATION = LOCATION_ID(*PLAYER.POSITION[0:2])
-            print(f"\nHEALTH: {PLAYER.HEALTH}/{PLAYER.MAX_HEALTH}.")
-            print(f"ARMOR CLASS: {PLAYER.ARMOR_CLASS}")
-            print(f"LOCATION: {_POSITION}")
-            print(f"{PLAYER.NAME} is in a {CURRENT_LOCATION.DESCRIPTION}.{CURRENT_LOCATION.DESCRIBE_LOCATION(PLAYER)}")
+            _HEALTH = f"\nHEALTH: {PLAYER.HEALTH}/{PLAYER.MAX_HEALTH}."
+            _ARMOR_CLASS = f"ARMOR CLASS: {PLAYER.ARMOR_CLASS}"
+            _POSITION = f"LOCATION: {_COORDINATES}"
+            UPDATE_DISPLAY("HEALTH", _INDEX, _HEALTH)
+            UPDATE_DISPLAY("ARMOR CLASS", _INDEX, _ARMOR_CLASS)
+            UPDATE_DISPLAY("POSITION", _INDEX, PLAYER.POSITION)
+            CLEAR_DISPLAY("LOCATION", _INDEX)
+            _LOCATION = f"{PLAYER.NAME} is in a {CURRENT_LOCATION.DESCRIPTION}.{CURRENT_LOCATION.DESCRIBE_LOCATION(PLAYER)}"
+            UPDATE_DISPLAY("LOCATION", _INDEX, _LOCATION, APPEND=True)
+            for i in [_HEALTH, _ARMOR_CLASS, PLAYER.POSITION]:
+                print(i)
         elif MOB and LOCATION_ID(*MOB.POSITION[0:2]) == LOCATION_ID(*PLAYER.POSITION[0:2]):
-            # MOB_INDEX = MOBS.index(MOB)+1
             _MOB_INFO = MOB_INFO(PLAYER, MOB)
-            print(_MOB_INFO)
-    # print(len(MOBS), MOB_NAMES)
+            UPDATE_DISPLAY("LOCATION", _INDEX, _MOB_INFO, APPEND=True)
+    for i in DISPLAY["LOCATION"][_INDEX]:
+        print(i)
+    if DEBUG:
+        logging.debug(len(MOBS))

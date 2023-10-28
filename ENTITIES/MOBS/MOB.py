@@ -1,10 +1,14 @@
 import math
 
 from ENTITIES.ENTITY import ENTITY
-from WORLD.LOCATION_ID import LOCATION_ID
+from WORLD.LOCATIONS.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import ROLL
-from ENTITIES.ITEMS.MELEE_WEAPON import MELEE_WEAPON
-from WORLD.GLOBAL_LISTS import PLAYERS, MOBS, INITIATIVE_MOBS, INITIATIVE_MOB_NAMES, ADD_ENTITY, REMOVE_ENTITY, INITIATIVE
+from LOGIC.FUNCTIONS import INITIATIVE
+from ENTITIES.ITEMS.MELEE_WEAPONS.MELEE_WEAPON import MELEE_WEAPON
+from WORLD.GLOBAL import GLOBAL_FLAGS
+from WORLD.GLOBAL import PLAYERS, MOBS, ADD_ENTITY, REMOVE_ENTITY
+import logging
+logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 
 class MOB(ENTITY):
@@ -77,7 +81,7 @@ class MOB(ENTITY):
     
     
     def COMBAT_CHECK(self, ENEMY):
-        ATTACK, GAME_RUNNING = True, True
+        GAME_RUNNING = True, True
 
         WEAPON = self.INVENTORY["WEAPON"]
         _PROFICIENCY = self.PROFICIENCY
@@ -114,7 +118,7 @@ class MOB(ENTITY):
         else:
             print(f"{self.NAME} attacked {ENEMY.NAME} and failed.")
 
-        return ATTACK, GAME_RUNNING
+        return GAME_RUNNING
     
     
     def DIE(self):
@@ -126,6 +130,7 @@ class MOB(ENTITY):
     def MOVE(self, DIRECTION, DISTANCE=1):
         X, Y = self.POSITION[0:2]
         MOVED = 0
+        CURRENT_LOCATION = None
         while MOVED < DISTANCE:
             if DIRECTION == "NORTH":
                 X -= 1
@@ -138,7 +143,8 @@ class MOB(ENTITY):
             MOVED +=1
             CURRENT_LOCATION = LOCATION_ID(*self.POSITION[0:2])
             NEW_LOCATION = LOCATION_ID(X, Y)
-            # print(f"{self.NAME} MOVED {MOVED}/{DISTANCE}")
+            if GLOBAL_FLAGS["DEBUG"]:
+                logging.debug(f"{self.NAME} MOVED {MOVED}/{DISTANCE}")
 
             if self in PLAYERS and CURRENT_LOCATION != NEW_LOCATION:
                 INITIATIVE(self, NEW_LOCATION)
