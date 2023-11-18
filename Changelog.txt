@@ -1,3 +1,9 @@
+Alpha 1.0.0:
+    Major changes:
+        - Uses Rogue-like ASCII display.
+        - Player moves with keyboard.
+        - Not all features yet converted.
+
 Alpha 0.3.0:
     Changes:
         - Player and Karen now start with empty Inventory (except the Player's Gold).

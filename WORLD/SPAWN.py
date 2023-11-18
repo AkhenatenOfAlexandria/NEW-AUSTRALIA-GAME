@@ -6,19 +6,27 @@ from ENTITIES.MOBS.KAREN import KAREN
 from WORLD.LOCATIONS.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import ROLL
 import WORLD.GAME_WORLD as _WORLD
-from WORLD.GLOBAL import PLAYERS, MOBS, REMOVE_ENTITY, GLOBAL_FLAGS, CONTAINERS
+from WORLD.GLOBAL import PLAYERS, MOBS, REMOVE_ENTITY, GLOBAL_FLAGS, CONTAINERS, OBJECTS
 from ENTITIES.ITEMS.CONTAINERS.CHEST import CHEST
 from ENTITIES.ITEMS.ARMOR.LEATHER_ARMOR import LEATHER_ARMOR
+from ENTITIES.MOBS.PLAYER.PLAYER import PLAYER
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
+
+def PLAYER_SPAWN(COUNT):
+    for i in range(COUNT):
+        _PLAYER = PLAYER()
+    for i in range(100):
+        _POSITION = [random.randint(-30,30), random.randint(-30,30), 0, 0]
+        _KAREN = KAREN(_POSITION)
 
 
 
 def SPAWN():
     global GLOBAL_FLAGS
     LEVEL, REALM, DEBUG = GLOBAL_FLAGS["LEVEL"], GLOBAL_FLAGS["REALM"], GLOBAL_FLAGS["DEBUG"]
-    KAREN_COUNT = LEVEL
+    KAREN_COUNT = LEVEL**2
 
     print("LOADING LEVEL...")
     for PLAYER in PLAYERS:
@@ -30,13 +38,30 @@ def SPAWN():
         if MOB and not MOB in PLAYERS:
             REMOVE_ENTITY(MOB)
     
+    MAX_X = 0
+    MIN_X = 0
+    MAX_Y = 0
+    MIN_Y = 0
+    for ROOM in _WORLD.GAME_WORLD[LEVEL]:
+        MAX_X = max(MAX_X, ROOM.MAX_X)
+        MAX_Y = max(MAX_Y, ROOM.MAX_Y)
+        MIN_X = min(MIN_X, ROOM.MIN_X)
+        MIN_Y = min(MIN_Y, ROOM.MIN_Y)
+
     if KAREN_COUNT:
+        
         for i in range(KAREN_COUNT):
             print(f"ADDING MONSTERS: {i+1}/{KAREN_COUNT}")
             _LOCATION = None
+            COUNT = 0
             while not _LOCATION or _LOCATION.START or _LOCATION.VICTORY:
-                _POSITION = [random.randint(-256, 256), random.randint(-256, 256), LEVEL*2, REALM]
-                _LOCATION = LOCATION_ID(*_POSITION[0:2]) 
+                logging.debug(f"Attempting to add KAREN... {COUNT}")
+                _POSITION = [random.randint(MIN_X, MAX_X), random.randint(MIN_Y, MAX_Y), LEVEL*2, REALM]
+                _LOCATION = LOCATION_ID(*_POSITION[0:2])
+                COUNT += 1
+                if COUNT > 1024:
+                    break
+                 
             _KAREN = KAREN(_POSITION, HEALTH=ROLL(2, 6))
     
     print(f"ADDING CHESTS...")
@@ -47,7 +72,7 @@ def SPAWN():
         for ROOM in EMPTY_ROOMS:
             CHEST_SPAWN = random.randint(1, LEVEL)
             if CHEST_SPAWN == LEVEL and ROOM.DESCRIPTION == "SMALL ROOM" and not ROOM.VICTORY:
-                CHEST_POSITION = (random.randint(ROOM.MIN_X, ROOM.MAX_X), random.randint(ROOM.MIN_Y, ROOM.MAX_Y), LEVEL, 0)
+                CHEST_POSITION = (random.randint(ROOM.MIN_X+1, ROOM.MAX_X-1), random.randint(ROOM.MIN_Y+1, ROOM.MAX_Y-1), LEVEL, 0)
                 ROOM.LOCAL_ITEMS.append(CHEST(CHEST_POSITION))
                 EMPTY_ROOMS.remove(ROOM)
             CHEST_COUNT += 1
@@ -72,5 +97,3 @@ def SPAWN():
             for ROOM in _WORLD.GAME_WORLD[LEVEL]:
                 logging.debug(f"{ROOM.DESCRIPTION}:{ROOM.LOCAL_ITEMS}")
     
-    if DEBUG:
-        input()

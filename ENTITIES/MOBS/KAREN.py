@@ -1,5 +1,5 @@
 from ENTITIES.MOBS.MOB import MOB
-from ENTITIES.MOBS.AI.ATTACK_PLAYER import ATTACK_PLAYER
+from ENTITIES.MOBS.AI.FOLLOW_PLAYER import ATTACK_PLAYER
 from ENTITIES.ITEMS.MELEE_WEAPONS.SCIMITAR import SCIMITAR
 from ENTITIES.ITEMS.ARMOR.LEATHER_ARMOR import LEATHER_ARMOR
 
@@ -31,6 +31,7 @@ class KAREN(MOB):
             *args, **kwargs
             )
            
+           self.CHARACTER = "K"
            self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
 
            self.EXPERIENCE_POINTS = 50
@@ -39,4 +40,4 @@ class KAREN(MOB):
     
 
     def UPDATE(self, *args, **kwargs):
-        return ATTACK_PLAYER(self)
+        ATTACK_PLAYER(self)

@@ -1,11 +1,12 @@
 import logging
 
 from LOGIC.MATH import RELATIVE_LOCATION
-from WORLD.GLOBAL import GLOBAL_FLAGS
+from WORLD.GLOBAL import GLOBAL_FLAGS, PLAYERS
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 class LOCATION:
+
 
     def __init__(self, X, Y, LENGTH_X, LENGTH_Y, DESCRIPTION, LEVEL, REALM=0, LOCAL_ITEMS=None, DOORS=None, START=False, VICTORY=False):
         RADIUS_X = LENGTH_X/2
@@ -22,39 +23,71 @@ class LOCATION:
         self.DOORS = DOORS if DOORS is not None else {}
         self.START = START
         self.VICTORY = VICTORY
+        self.STRING = None
+        self.FOUND = False
+
 
     def ADD_ITEM(self, ITEM):
         self.LOCAL_ITEMS.append(ITEM)
         if GLOBAL_FLAGS["DEBUG"]:
             logging.debug(f"Added {ITEM.NAME} to {self.DESCRIPTION}.")
 
+
     def REMOVE_ITEM(self, ITEM):
         self.LOCAL_ITEMS.remove(ITEM)
+
+
+    def _DRAW(self):
+        LENGTH = int(self.MAX_X - self.MIN_X)
+        HEIGHT = int(self.MAX_Y - self.MIN_Y)
+        _STRING = ""
+        
+        EAST_WALL = "#"
+        WEST_WALL = "#"
+        if "NORTH" in self.DOORS:
+            ROOM = "*"
+        else:
+            ROOM = "#"
+        for i in range(LENGTH-1):
+            if "EAST" in self.DOORS:
+                EAST_WALL += "*"
+            else:
+                EAST_WALL += "#"
+            if "WEST" in self.DOORS:
+                WEST_WALL += "*"
+            else:
+                WEST_WALL += "#"
+        EAST_WALL += "#"
+        WEST_WALL += "#"
+        for i in range(LENGTH-1):
+            if self.VICTORY:
+                ROOM += "+"
+            elif self.START:
+                ROOM += "-"
+            else:
+                ROOM += " "
+        if "SOUTH" in self.DOORS:
+            ROOM += "*"
+        else:
+            ROOM += "#"
+        _STRING += EAST_WALL
+        for i in range(HEIGHT-1):
+            _STRING += f"\n{ROOM}"
+        _STRING += f"\n{WEST_WALL}"
+        return _STRING
     
-    def DESCRIBE_LOCATION(self, PLAYER):
-        X, Y = PLAYER.POSITION[0:2]
-        LENGTH_X = (self.MAX_X - self.MIN_X)*5
-        LENGTH_Y = (self.MAX_Y - self.MIN_Y)*5
-        NORTH = (X-self.MIN_X)*5
-        SOUTH = (self.MAX_X-X)*5
-        EAST = (self.MAX_Y-Y)*5
-        WEST = (Y-self.MIN_Y)*5
+    
+    def DRAW(self, CONSOLE):
+        PLAYER = PLAYERS[0]
+        if not PLAYER:
+            return
+        X = int(CONSOLE.width//2 + self.MIN_X - PLAYER.POSITION[0])
+        Y = int(CONSOLE.height//2 - self.MAX_Y + PLAYER.POSITION[1])
         
-        _DESCRIPTION = f"\n\tThe {self.DESCRIPTION} is {LENGTH_Y} feet by {LENGTH_X} feet. The walls are {EAST} feet EAST, {WEST} feet WEST, {NORTH} feet NORTH, and {SOUTH} feet SOUTH."
-
-        for key, value in self.DOORS.items():
-            X_DISTANCE, Y_DISTANCE, X_DIRECTION, Y_DIRECTION = RELATIVE_LOCATION(X, Y, *value)
-            X_DISTANCE, Y_DISTANCE = f"{X_DISTANCE*5} feet", f"{Y_DISTANCE*5} feet"
-
-            _DESCRIPTION += f"\n\t{key} DOOR: {Y_DISTANCE} {Y_DIRECTION}, {X_DISTANCE} {X_DIRECTION}."
-        
-        for ITEM in self.LOCAL_ITEMS:
-            X_DISTANCE, Y_DISTANCE, X_DIRECTION, Y_DIRECTION = RELATIVE_LOCATION(X, Y, *ITEM.POSITION[0:2])
-            X_DISTANCE, Y_DISTANCE = f"{X_DISTANCE*5} feet", f"{Y_DISTANCE*5} feet"
-
-            _DESCRIPTION += f"\n\t{ITEM.NAME}: {X_DISTANCE} {X_DIRECTION}, {Y_DISTANCE} {Y_DIRECTION}."
-            if ITEM.OPEN:
-                _DESCRIPTION += " OPEN."
-
-        return _DESCRIPTION
+        try:
+            CONSOLE.print(X, Y, string=self.STRING)
+            for ITEM in self.LOCAL_ITEMS:
+                ITEM.DRAW(CONSOLE)
+        except AttributeError as e:
+            logging.error(f"AtrributeError {e}\n{self.STRING}")
     

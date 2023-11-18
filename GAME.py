@@ -40,11 +40,12 @@ def GAME():
         
         SPAWN()
         
+        
         while GAME_RUNNING:
             if not DEBUG:
                 clear_console()
-            COMBAT, TURN = GLOBAL_FLAGS["COMBAT"], GLOBAL_FLAGS["TURN"]
-            TURN = UPDATE_FLAG("TURN", TURN+1)
+            COMBAT, TIME = GLOBAL_FLAGS["COMBAT"], GLOBAL_FLAGS["TIME"]
+            TIME = UPDATE_FLAG("TIME", TIME+1)
             print(REFRESH_DISPLAY())
                         
             if DEBUG:
@@ -66,7 +67,7 @@ def GAME():
                     COMBAT = GLOBAL_FLAGS["COMBAT"]
             if LEVEL_COMPLETE or not GAME_RUNNING:
                 break
-            input(f"End of TURN {TURN}. ENTER to continue.\n")
+            input(f"End of TIME {TIME}. ENTER to continue.\n")
             
         
         if not GAME_RUNNING:

@@ -1,5 +1,5 @@
 from ENTITIES.ITEMS.ITEM import ITEM
-from WORLD.GLOBAL import CONTAINERS, ADD_ENTITY
+from WORLD.GLOBAL import CONTAINERS, ADD_ENTITY, UPDATE_DISPLAY
 
 
 class CONTAINER(ITEM):
@@ -21,8 +21,9 @@ class CONTAINER(ITEM):
 
 
     def VIEW_CONTENTS(self):
-        print(f"{self.NAME}:")
+        DISPLAY = f"\n{self.NAME}:"
         if self.GOLD:
-            print(f"GOLD: {self.GOLD}")
+            DISPLAY+=f"\n     GOLD: {self.GOLD}"
         for item in self.CONTENTS:
-            print(item.NAME)
+            DISPLAY += f"\n     {item.NAME}"
+        UPDATE_DISPLAY("INFO", DISPLAY)

@@ -5,8 +5,7 @@ from WORLD.LOCATIONS.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import ROLL
 from LOGIC.FUNCTIONS import INITIATIVE
 from ENTITIES.ITEMS.MELEE_WEAPONS.MELEE_WEAPON import MELEE_WEAPON
-from WORLD.GLOBAL import GLOBAL_FLAGS
-from WORLD.GLOBAL import PLAYERS, MOBS, ADD_ENTITY, REMOVE_ENTITY
+from WORLD.GLOBAL import UPDATE_DISPLAY, DISPLAY, MOBS, ADD_ENTITY, REMOVE_ENTITY
 import logging
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
@@ -81,12 +80,15 @@ class MOB(ENTITY):
     
     
     def COMBAT_CHECK(self, ENEMY):
+        DEATH = None
         GAME_RUNNING = True, True
 
         WEAPON = self.INVENTORY["WEAPON"]
         _PROFICIENCY = self.PROFICIENCY
         CHECK = ROLL(1, 20)
         _CHECK = CHECK + _PROFICIENCY
+
+        HUD = ""
         
         if WEAPON and "FINESSE" in WEAPON.ATTRIBUTES:
             _CHECK += max(self.STRENGTH_MODIFIER, self.DEXTERITY_MODIFIER)
@@ -94,12 +96,16 @@ class MOB(ENTITY):
             _CHECK += self.STRENGTH_MODIFIER
 
         if CHECK == 1:
-            print(f"{self.NAME} attacked {ENEMY.NAME} and missed.")
+            logging.debug(f"{self.NAME} attacked {ENEMY.NAME} and missed.")
+            HUD += f"\n{self.NAME} attacked {ENEMY.NAME} and missed."
             
         elif CHECK == 20 or _CHECK > ENEMY.ARMOR_CLASS:
 
             if CHECK == 20:
-                print(f"CRITICAL HIT:")
+                logging.debug(f"CRITICAL HIT:")
+                HUD += f"\nCRITICAL HIT: "
+            else:
+                HUD += "\n"
             DAMAGE = (
                 ROLL(*WEAPON.DAMAGE) + _PROFICIENCY if isinstance(WEAPON, MELEE_WEAPON)
                 else max(0, self.STRENGTH_MODIFIER + _PROFICIENCY)
@@ -107,58 +113,34 @@ class MOB(ENTITY):
             ENEMY.HEALTH -= DAMAGE
 
             if ENEMY.HEALTH <= 0:
-                print(f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE.")
+                DEATH = f"\n{ENEMY.NAME} died."
+                
                 GAME_RUNNING = ENEMY.DIE()
                 if hasattr(self, 'EXPERIENCE_LEVEL') and hasattr(ENEMY, 'EXPERIENCE_POINTS'):
                     self.EXPERIENCE += ENEMY.EXPERIENCE_POINTS
+                
 
-            else:
-                print(f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE (HEALTH: {ENEMY.HEALTH}/{ENEMY.MAX_HEALTH}).")
+            logging.debug(f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE.")
+            HUD += f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE."
+            if DEATH:
+                HUD += DEATH
 
         else:
-            print(f"{self.NAME} attacked {ENEMY.NAME} and failed.")
+            logging.debug(f"{self.NAME} attacked {ENEMY.NAME} and failed.")
+            HUD += f"\n{self.NAME} attacked {ENEMY.NAME} and failed."
+        
+        UPDATE_DISPLAY("INFO", DISPLAY["INFO"]+HUD)
 
         return GAME_RUNNING
     
     
     def DIE(self):
         REMOVE_ENTITY(self)
-        print(f"{self.NAME} died.")
+        MESSAGE = f"{self.NAME} died."
+        logging.debug(MESSAGE)
+
         return True
-    
-    
-    def MOVE(self, DIRECTION, DISTANCE=1):
-        X, Y = self.POSITION[0:2]
-        MOVED = 0
-        CURRENT_LOCATION = None
-        while MOVED < DISTANCE:
-            if DIRECTION == "NORTH":
-                X -= 1
-            elif DIRECTION == "SOUTH":
-                X += 1
-            elif DIRECTION == "EAST":
-                Y += 1
-            elif DIRECTION == "WEST":
-                Y -= 1
-            MOVED +=1
-            CURRENT_LOCATION = LOCATION_ID(*self.POSITION[0:2])
-            NEW_LOCATION = LOCATION_ID(X, Y)
-            if GLOBAL_FLAGS["DEBUG"]:
-                logging.debug(f"{self.NAME} MOVED {MOVED}/{DISTANCE}")
-
-            if self in PLAYERS and CURRENT_LOCATION != NEW_LOCATION:
-                INITIATIVE(self, NEW_LOCATION)
-                break
-
-            
-        if not CURRENT_LOCATION or NEW_LOCATION == CURRENT_LOCATION:
-            return X, Y # Move the mob if he is clipped out of the map, but not if he would clip out of the map 
-        elif DIRECTION in CURRENT_LOCATION.DOORS:
-            DOOR_X, DOOR_Y = CURRENT_LOCATION.DOORS[DIRECTION]
-            if (DIRECTION in ["NORTH", "SOUTH"] and DOOR_Y == Y) or (DIRECTION in ["EAST", "WEST"] and DOOR_X == X):
-                return X, Y # Move the mob out of the room if he is aligned with the door
-
-        return self.POSITION[0:2]  # Keep the mob in the current position
+        
 
     def ROLL_INITIATIVE(self, *args):
         INITIATIVE_ROLL = ROLL(1, 20) + self.DEXTERITY_MODIFIER

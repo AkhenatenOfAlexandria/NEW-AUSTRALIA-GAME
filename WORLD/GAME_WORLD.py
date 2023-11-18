@@ -98,7 +98,7 @@ def CREATE_LEVEL():
 
             if Y > 0:
                 if DEBUG:
-                    logging.debug(f"{i}/{RANGE} failed. {X, Y}")
+                    logging.debug(f"{i*2}/{RANGE*2} failed. {X, Y}")
             else:
                 _CORRIDOR = CORRIDOR(X, Y, LONG, LEVEL, DOORS = {
                     ENTRANCE_DIRECTION : ENTRANCE,
@@ -131,6 +131,7 @@ def CREATE_LEVEL():
                         break
                 if not _OVERLAP:
                     PREVIOUS.DOORS[DIRECTION] = ENTRANCE
+                    logging.debug(PREVIOUS.DOORS[DIRECTION])
                     NEW_LEVEL.append(_CORRIDOR)
                     NEW_LEVEL.append(_SMALL_ROOM)
                     if DEBUG:
@@ -138,21 +139,19 @@ def CREATE_LEVEL():
                     break
                 else:
                     if DEBUG:
-                        logging.debug(f"{i}/{RANGE} failed: {OVERLAP_REASON}")
+                        logging.debug(f"{i*2}/{RANGE*2} failed: {OVERLAP_REASON}")
             COUNT += 1
             if DEBUG and COUNT > 100:
-                for ROOM in NEW_LEVEL:
-                    logging.debug(ROOM.DESCRIPTION, (ROOM.MIN_X+ROOM.MAX_X)/2, (ROOM.MIN_Y+ROOM.MAX_Y)/2)
-                input()
-                COUNT = 0
-            if not DEBUG and COUNT > 1024:
+                logging.debug(COUNT)
+            if COUNT > 2048:
                 if _SMALL_ROOM.VICTORY:
                     NEW_LEVEL[-1].VICTORY = True
                 break
                     
-
+    for ROOM in NEW_LEVEL:
+        ROOM.STRING = ROOM._DRAW()
+        
     GAME_WORLD.append(NEW_LEVEL)
     if DEBUG:
         for ROOM in NEW_LEVEL:
             logging.debug(f"{ROOM.DESCRIPTION}: {(ROOM.MIN_X+ROOM.MAX_X)/2}, {(ROOM.MIN_Y+ROOM.MAX_Y)/2}")
-        input()

@@ -84,30 +84,7 @@ def MOVE_PLAYER(PLAYER, COMMAND, MOVEMENT):
         print("Invalid DISTANCE.")
 
 
-def OPEN_INVENTORY(PLAYER):
-    print(f"EXPERIENCE LEVEL: {PLAYER.EXPERIENCE_LEVEL}")
-    print(f"EXPERIENCE POINTS: {PLAYER.EXPERIENCE}")
-    print("INVENTORY:")
-    if PLAYER.INVENTORY["WEAPON"]:
-        WEAPON = PLAYER.INVENTORY["WEAPON"].NAME
-    else:
-        WEAPON = None
-    if PLAYER.INVENTORY["ARMOR"]:
-        ARMOR = PLAYER.INVENTORY["ARMOR"].NAME
-    else:
-        ARMOR = None
-    print(f"\tWEAPON: {WEAPON}")
-    print(f"\tARMOR: {ARMOR}")
-    if PLAYER.INVENTORY["SHIELD"]:
-        print("\tSHIELD")
-    print(f"\tGOLD: {PLAYER.INVENTORY['GOLD']}")
-    
-    _ITEMS = []
 
-    for ITEM in PLAYER.INVENTORY["ITEMS"]:
-        _ITEMS.append(ITEM.NAME)
-    
-    print(f'\tITEMS: {_ITEMS}')
 
 
 def ATTACK(PLAYER, COMMAND):

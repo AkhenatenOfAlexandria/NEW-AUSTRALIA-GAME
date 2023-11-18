@@ -4,19 +4,17 @@ logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 # Define the initial values for global variables in a dictionary
 GLOBAL_FLAGS = {
-    "DEBUG": False,
-    "TURN": 0,
+    "DEBUG": True,
+    "TIME": 0,
     "COMBAT": False,
     "LEVEL": 0,
-    "REALM": 0
+    "REALM": 0,
+    "NEW LEVEL": False
 }
 
 DISPLAY = {
-    "GAME": f"TURN: {GLOBAL_FLAGS['TURN']}\nLEVEL: {GLOBAL_FLAGS['LEVEL']}",
-    "HEALTH" : [],
-    "ARMOR CLASS" :[],
-    "POSITION": [],
-    "LOCATION": []
+    "HUD" : None,
+    "INFO" : "\n"
 }
 
 DEBUG = GLOBAL_FLAGS["DEBUG"]
@@ -30,9 +28,11 @@ ITEMS = []
 CONTAINERS = []
 INITIATIVE_MOBS = []
 INITIATIVE_MOB_NAMES = []
+OBJECTS = []
+
 
 # Create a dictionary to store your lists for easy access
-LISTS = [PLAYERS, MOBS, ITEMS, CONTAINERS, INITIATIVE_MOBS, INITIATIVE_MOB_NAMES]
+LISTS = [PLAYERS, MOBS, ITEMS, CONTAINERS, INITIATIVE_MOBS, INITIATIVE_MOB_NAMES, OBJECTS]
 
 
 def INITIALIZE_DISPLAY():
@@ -45,7 +45,7 @@ def INITIALIZE_DISPLAY():
 
 
 def REFRESH_DISPLAY():
-    DISPLAY["GAME"] = f"TURN: {GLOBAL_FLAGS['TURN']}\nLEVEL: {GLOBAL_FLAGS['LEVEL']}"
+    DISPLAY["GAME"] = f"TIME: {GLOBAL_FLAGS['TIME']}\nLEVEL: {GLOBAL_FLAGS['LEVEL']}"
     return DISPLAY["GAME"]
 
 
@@ -56,19 +56,19 @@ def CLEAR_DISPLAY(KEY, INDEX):
         logging.debug(f"Cleared {KEY} DISPLAY.")
 
 # Function to update display
-def UPDATE_DISPLAY(KEY, INDEX, VALUE, APPEND=False):
+def UPDATE_DISPLAY(KEY, VALUE, APPEND=False):
     global DISPLAY
     if KEY in DISPLAY:
         if not APPEND:
-            DISPLAY[KEY][INDEX] = VALUE
+            DISPLAY[KEY] = VALUE
             _DEBUG = f"{KEY} UPDATED: {DISPLAY[KEY]}"
             
-            RETURN = DISPLAY[KEY][INDEX]
+            RETURN = DISPLAY[KEY]
         else:
-            DISPLAY[KEY][INDEX].append(VALUE)
+            DISPLAY[KEY].append(VALUE)
             _DEBUG = f"{KEY} UPDATED: {DISPLAY[KEY][-1]}"
 
-            RETURN = DISPLAY[KEY][INDEX][-1]
+            RETURN = DISPLAY[KEY][-1]
 
     if GLOBAL_FLAGS["DEBUG"]:
             logging.debug(_DEBUG)
