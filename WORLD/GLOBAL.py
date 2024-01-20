@@ -58,18 +58,12 @@ def CLEAR_DISPLAY(KEY, INDEX):
 # Function to update display
 def UPDATE_DISPLAY(KEY, VALUE, APPEND=False):
     global DISPLAY
-    if KEY in DISPLAY:
-        if not APPEND:
-            DISPLAY[KEY] = VALUE
-            _DEBUG = f"{KEY} UPDATED: {DISPLAY[KEY]}"
-            
-            RETURN = DISPLAY[KEY]
-        else:
-            DISPLAY[KEY].append(VALUE)
-            _DEBUG = f"{KEY} UPDATED: {DISPLAY[KEY][-1]}"
-
-            RETURN = DISPLAY[KEY][-1]
-
+    if KEY == "HUD":
+        DISPLAY[KEY] = VALUE
+    elif KEY == "INFO":
+        DISPLAY[KEY] = '\n'+VALUE
+    _DEBUG = f"{KEY} UPDATED: {DISPLAY[KEY]}"
+    RETURN = DISPLAY[KEY]
     if GLOBAL_FLAGS["DEBUG"]:
             logging.debug(_DEBUG)
     return RETURN

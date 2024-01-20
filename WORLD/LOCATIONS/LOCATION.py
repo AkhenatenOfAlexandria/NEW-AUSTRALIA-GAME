@@ -11,10 +11,10 @@ class LOCATION:
     def __init__(self, X, Y, LENGTH_X, LENGTH_Y, DESCRIPTION, LEVEL, REALM=0, LOCAL_ITEMS=None, DOORS=None, START=False, VICTORY=False):
         RADIUS_X = LENGTH_X/2
         RADIUS_Y = LENGTH_Y/2
-        self.MIN_X = X - RADIUS_X
-        self.MAX_X = X + RADIUS_X
-        self.MIN_Y = Y - RADIUS_Y
-        self.MAX_Y = Y + RADIUS_Y
+        self.MIN_X = int(X - RADIUS_X)
+        self.MAX_X = int(X + RADIUS_X)
+        self.MIN_Y = int(Y - RADIUS_Y)
+        self.MAX_Y = int(Y + RADIUS_Y)
         self.LEVEL = LEVEL
         self.Z = LEVEL*2
         self.W = REALM

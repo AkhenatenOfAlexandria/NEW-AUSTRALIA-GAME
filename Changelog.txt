@@ -1,3 +1,8 @@
+Alpha 1.0.1
+    - Window size changed from 100*75 to 75*58.
+    - HUD now cleans itself.
+    - Fixed world generation bug?
+
 Alpha 1.0.0:
     Major changes:
         - Uses Rogue-like ASCII display.

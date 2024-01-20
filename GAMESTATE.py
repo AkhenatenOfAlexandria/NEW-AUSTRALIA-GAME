@@ -31,6 +31,7 @@ class GAMESTATE:
         for PLAYER in PLAYERS:
                 PLAYER.DRAW(CONSOLE)
         HUD = DISPLAY["HUD"]
+        
         HUD.DRAW(CONSOLE)
 
 

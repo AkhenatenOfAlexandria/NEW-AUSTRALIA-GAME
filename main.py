@@ -13,10 +13,10 @@ from WORLD.LOCATIONS.LOCATION_ID import LOCATION_ID
 
 
 def MAIN():
-	VERSION = "ALPHA 1.0.0"
+	VERSION = "ALPHA 1.0.1"
 	
-	WIDTH = 100
-	HEIGHT = 75
+	WIDTH = 72
+	HEIGHT = 58
 
 	tileset = tcod.tileset.load_tilesheet(
 			"Alloy_curses_12x12.png", columns=16, rows=16, charmap=tcod.tileset.CHARMAP_CP437

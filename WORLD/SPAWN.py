@@ -43,10 +43,10 @@ def SPAWN():
     MAX_Y = 0
     MIN_Y = 0
     for ROOM in _WORLD.GAME_WORLD[LEVEL]:
-        MAX_X = max(MAX_X, ROOM.MAX_X)
-        MAX_Y = max(MAX_Y, ROOM.MAX_Y)
-        MIN_X = min(MIN_X, ROOM.MIN_X)
-        MIN_Y = min(MIN_Y, ROOM.MIN_Y)
+        MAX_X = int(max(MAX_X, ROOM.MAX_X))
+        MAX_Y = int(max(MAX_Y, ROOM.MAX_Y))
+        MIN_X = int(min(MIN_X, ROOM.MIN_X))
+        MIN_Y = int(min(MIN_Y, ROOM.MIN_Y))
 
     if KAREN_COUNT:
         
