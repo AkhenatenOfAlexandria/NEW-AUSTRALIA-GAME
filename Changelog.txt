@@ -1,3 +1,13 @@
+Alpha 1.0.2:
+    - Escape key now quits game.
+    - Player can now open and close Chests and loot Gold from open Chests.
+    - Player can now regenerate to Max Health if no enemies are around.
+    - Player's Max Health now displays.
+    - Player can now loot Items from Chests.
+    - Chest Gold is now equal to the Level instead of 10%.
+    - Items now display inventory index.
+    - Display now has 20 lines instead of 10.
+
 Alpha 1.0.1
     - Window size changed from 100*75 to 75*58.
     - HUD now cleans itself.

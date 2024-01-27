@@ -40,6 +40,8 @@ class GAMESTATE:
         match EVENT:
             case tcod.event.Quit():
                 raise SystemExit()
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.ESCAPE):
+                raise SystemExit()
             case tcod.event.KeyDown(sym=tcod.event.KeySym.LEFT):
                 self.UPDATE("LEFT")
             case tcod.event.KeyDown(sym=tcod.event.KeySym.a):
@@ -62,13 +64,22 @@ class GAMESTATE:
                 PLAYER.OPEN_INVENTORY()
             case tcod.event.KeyDown(sym=tcod.event.KeySym.BACKSPACE):
                 UPDATE_DISPLAY("INFO", "")
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.l):
+                self.UPDATE("LOOT")
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.r):
+                self.UPDATE("LONG REST")
 
     
     def UPDATE(self, MOVE):
-        UPDATE_FLAG("TIME", GLOBAL_FLAGS["TIME"]+1)
         PLAYER = PLAYERS[0]
         if not PLAYER:
             return
+        UPDATE_FLAG("TIME", GLOBAL_FLAGS["TIME"]+1)
+        _REST = True
         for MOB in MOBS:
             if MOB and LOCATION_ID(*MOB.POSITION[0:2]) == LOCATION_ID(*PLAYER.POSITION[0:2]):
                 MOB.UPDATE(MOVE)
+                if MOB != PLAYER:
+                    _REST = False
+        if MOVE == "LONG REST" and _REST:
+            PLAYER.HEALTH = PLAYER.MAX_HEALTH

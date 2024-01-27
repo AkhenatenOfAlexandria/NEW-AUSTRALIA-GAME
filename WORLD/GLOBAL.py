@@ -88,10 +88,13 @@ def ADD_ENTITY(ENTITY, *args):
         else:
             logging.error(f"ERROR: LIST does not exist.")
 
-def REMOVE_ENTITY(ENTITY):
+def REMOVE_ENTITY(ENTITY, SAFE=True):
     for LIST in LISTS:
         if ENTITY in LIST:
-            ID = LIST.index(ENTITY)
-            LIST[ID] = None
+            if SAFE:
+                ID = LIST.index(ENTITY)
+                LIST[ID] = None
+            else:
+                LIST.remove(ENTITY)
             if DEBUG:
                 logging.debug(f"Removed {ENTITY.NAME} from {LIST}.")

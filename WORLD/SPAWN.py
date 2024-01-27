@@ -6,10 +6,10 @@ from ENTITIES.MOBS.KAREN import KAREN
 from WORLD.LOCATIONS.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import ROLL
 import WORLD.GAME_WORLD as _WORLD
-from WORLD.GLOBAL import PLAYERS, MOBS, REMOVE_ENTITY, GLOBAL_FLAGS, CONTAINERS, OBJECTS
+from WORLD.GLOBAL import PLAYERS, MOBS, REMOVE_ENTITY, GLOBAL_FLAGS, CONTAINERS, ITEMS
 from ENTITIES.ITEMS.CONTAINERS.CHEST import CHEST
-from ENTITIES.ITEMS.ARMOR.LEATHER_ARMOR import LEATHER_ARMOR
 from ENTITIES.MOBS.PLAYER.PLAYER import PLAYER
+from LOGIC.FUNCTIONS import LOOT
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
@@ -83,14 +83,29 @@ def SPAWN():
                 break
             
     
-    CHEST_GOLD = LEVEL/10
-    while CHEST_GOLD > 0:
+    CHEST_GOLD = LEVEL
+    while CHEST_GOLD and len(CONTAINERS):
         for container in CONTAINERS:
             if random.randint(1, len(CONTAINERS)) == 1:
-                container.GOLD = round(container.GOLD+0.01, 2)
-                CHEST_GOLD = round(CHEST_GOLD-0.01, 2)
-                CHEST_COUNT = math.floor(LEVEL+CHEST_GOLD*10)
-                print(f"{CHEST_COUNT}/{LEVEL*2}")
+                _LOOT = random.choice(LOOT)
+                logging.info(f"Loot selected: {_LOOT}")
+                if type(_LOOT) == str:
+                    container.GOLD = round(container.GOLD+0.01, 2)
+                    CHEST_GOLD = round(CHEST_GOLD-0.01, 2)
+                    _CHEST_COUNT = math.floor(LEVEL+CHEST_GOLD*10)
+                    print(f"{_CHEST_COUNT}/{LEVEL*2}")
+                elif len(container.CONTENTS) < 10:
+                    _LOOT = _LOOT()
+                    logging.info(f"LOOT PRICE: {_LOOT.PRICE}; CHEST GOLD: {CHEST_GOLD}")
+                    if CHEST_GOLD >= _LOOT.PRICE:
+                        container.ADD_ITEM(_LOOT)
+                        logging.info(f"Added Loot: {_LOOT.NAME}.")
+                        CHEST_GOLD -= _LOOT.PRICE
+                    else:
+                        REMOVE_ENTITY(_LOOT, SAFE=False)
+                        logging.info(f"Discarded Loot: {_LOOT.NAME}.")
+
+
 
 
     if DEBUG:

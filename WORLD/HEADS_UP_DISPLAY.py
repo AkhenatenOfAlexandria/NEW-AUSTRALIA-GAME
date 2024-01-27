@@ -26,13 +26,14 @@ class HEADS_UP_DISPLAY:
             return
         POSITION = PLAYER.POSITION
         HEALTH = PLAYER.HEALTH
+        MAX_HEALTH = PLAYER.MAX_HEALTH
         
         X, Y = 1, 1
-        while INFO.count('\n') > 10:
+        while INFO.count('\n') > 20:
             INDEX = INFO.find('\n', 2)
             if INDEX != -1:
                 UPDATE_DISPLAY("INFO", f"{INFO[INDEX:]}")
                 INFO = DISPLAY["INFO"]            
 
-        _DISPLAY = f"TIME: {TIME}\nLEVEL: {LEVEL}\nLOCATION: {POSITION}\nHEALTH: {HEALTH}{INFO}"
+        _DISPLAY = f"TIME: {TIME}\nLEVEL: {LEVEL}\nLOCATION: {POSITION}\nHEALTH: {HEALTH}/{MAX_HEALTH}{INFO}"
         CONSOLE.print(X, Y, string=_DISPLAY)

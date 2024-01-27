@@ -117,8 +117,12 @@ class PLAYER(MOB):
             elif len(_LOCATION.LOCAL_ITEMS):
                 for ITEM in _LOCATION.LOCAL_ITEMS:
                     if ITEM in CONTAINERS and DISTANCE(*self.POSITION[0:2], *ITEM.POSITION[0:2]) < 2:
-                        ITEM.VIEW_CONTENTS()
-                        
+                        if ITEM.OPEN:
+                            ITEM.CLOSE_CONTAINER()
+                        else:
+                            ITEM.OPEN_CONTAINER()
+        elif MOVE == "LOOT":
+            self.LOOT()
         
 
     def OPEN_INVENTORY(self):
@@ -139,11 +143,24 @@ class PLAYER(MOB):
         if self.INVENTORY["SHIELD"]:
             DISPLAY += "\n     SHIELD"
         DISPLAY += f"\n     GOLD: {self.INVENTORY['GOLD']}"
+        DISPLAY += f"\n     ITEMS:"
         
-        _ITEMS = []
-
         for ITEM in self.INVENTORY["ITEMS"]:
-            _ITEMS.append(ITEM.NAME)
+            DISPLAY += f"\n          {self.INVENTORY['ITEMS'].index(ITEM)}. {ITEM.NAME}"
         
-        DISPLAY += f'\n     ITEMS: {_ITEMS}'
         UPDATE_DISPLAY("INFO", DISPLAY)
+
+    
+    def LOOT(self):
+        _LOCATION = LOCATION_ID(*self.POSITION[0:2])
+        if len(_LOCATION.LOCAL_ITEMS):
+            for ITEM in _LOCATION.LOCAL_ITEMS:
+                if ITEM in CONTAINERS and DISTANCE(*self.POSITION[0:2], *ITEM.POSITION[0:2]) < 2 and ITEM.OPEN:
+                    if ITEM.GOLD:
+                        self.INVENTORY["GOLD"] += ITEM.GOLD
+                        ITEM.GOLD = 0
+                    while len(ITEM.CONTENTS) and len(self.INVENTORY["ITEMS"]) < 10:
+                        _ITEM = ITEM.CONTENTS[0]
+                        self.INVENTORY["ITEMS"].append(_ITEM)
+                        ITEM.REMOVE_ITEM(_ITEM)
+                    ITEM.VIEW_CONTENTS()

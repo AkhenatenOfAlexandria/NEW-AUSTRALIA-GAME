@@ -1,5 +1,8 @@
 from ENTITIES.ITEMS.ITEM import ITEM
-from WORLD.GLOBAL import CONTAINERS, ADD_ENTITY, UPDATE_DISPLAY
+from WORLD.GLOBAL import CONTAINERS, ADD_ENTITY, UPDATE_DISPLAY, DISPLAY
+
+import logging
+logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 
 class CONTAINER(ITEM):
@@ -16,8 +19,10 @@ class CONTAINER(ITEM):
     def ADD_ITEM(self, _ITEM):
         self.CONTENTS.append(_ITEM)
 
+
     def REMOVE_ITEM(self, _ITEM):
         self.CONTENTS.remove(_ITEM)
+        logging.info(f"Removed {_ITEM.NAME} from {self.NAME}.")
 
 
     def VIEW_CONTENTS(self):
@@ -25,5 +30,15 @@ class CONTAINER(ITEM):
         if self.GOLD:
             DISPLAY+=f"\n     GOLD: {self.GOLD}"
         for item in self.CONTENTS:
-            DISPLAY += f"\n     {item.NAME}"
+            DISPLAY += f"\n     {self.CONTENTS.index(item)}. {item.NAME}"
         UPDATE_DISPLAY("INFO", DISPLAY)
+
+
+    def OPEN_CONTAINER(self):
+        self.OPEN = True
+        self.VIEW_CONTENTS()
+    
+
+    def CLOSE_CONTAINER(self):
+        self.OPEN = False
+        UPDATE_DISPLAY("INFO", f"\nClosed {self.NAME}.")
