@@ -52,6 +52,7 @@ class MOB(ENTITY):
         
         self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
         self.PROFICIENCY = PROFICIENCY
+        self.PRONE = False
     
 
     def MODIFIER(self, ATTRIBUTE):
@@ -67,6 +68,8 @@ class MOB(ENTITY):
                 _ARMOR_CLASS += 1
             if not _ARMOR.HEAVY:
                 _ARMOR_CLASS += self.DEXTERITY_MODIFIER    
+            elif _ARMOR.HEAVY == "MEDIUM":
+                _ARMOR_CLASS += min(2, self.DEXTERITY_MODIFIER)
 
         else:
             _ARMOR_CLASS = 10 + self.DEXTERITY_MODIFIER
@@ -74,8 +77,6 @@ class MOB(ENTITY):
         if self.INVENTORY["SHIELD"]:
             _ARMOR_CLASS += 2
 
-
-        
         return _ARMOR_CLASS
     
     
@@ -85,7 +86,12 @@ class MOB(ENTITY):
 
         WEAPON = self.INVENTORY["WEAPON"]
         _PROFICIENCY = self.PROFICIENCY
-        CHECK = ROLL(1, 20)
+        if self.PRONE and not ENEMY.PRONE:
+            CHECK = min(ROLL(1,20), ROLL(1,20))
+        elif ENEMY.PRONE and not self.PRONE:
+            CHECK = max(ROLL(1,20), ROLL(1,20))
+        else:
+            CHECK = ROLL(1,20)
         _CHECK = CHECK + _PROFICIENCY
 
         HUD = ""
@@ -96,13 +102,17 @@ class MOB(ENTITY):
             _CHECK += self.STRENGTH_MODIFIER
 
         if CHECK == 1:
-            logging.debug(f"{self.NAME} attacked {ENEMY.NAME} and missed.")
-            HUD += f"\n{self.NAME} attacked {ENEMY.NAME} and missed."
+            if WEAPON:
+                logging.info(f"{self.NAME} attacked {ENEMY.NAME} with {WEAPON.NAME} and missed.")
+                HUD += f"\n{self.NAME} attacked {ENEMY.NAME} with {WEAPON.NAME} and missed."
+            else:
+                logging.info(f"{self.NAME} attacked {ENEMY.NAME} and missed.")
+                HUD += f"\n{self.NAME} attacked {ENEMY.NAME} and missed."
             
         elif CHECK == 20 or _CHECK > ENEMY.ARMOR_CLASS:
 
             if CHECK == 20:
-                logging.debug(f"CRITICAL HIT:")
+                logging.info(f"CRITICAL HIT:")
                 HUD += f"\nCRITICAL HIT: "
             else:
                 HUD += "\n"
@@ -120,14 +130,22 @@ class MOB(ENTITY):
                     self.EXPERIENCE += ENEMY.EXPERIENCE_POINTS
                 
 
-            logging.debug(f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE.")
-            HUD += f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE."
+            if WEAPON:
+                logging.info(f"{self.NAME} hit {ENEMY.NAME} with {WEAPON.NAME}, dealing {DAMAGE} DAMAGE.")
+                HUD += f"{self.NAME} hit {ENEMY.NAME} with {WEAPON.NAME}, dealing {DAMAGE} DAMAGE."
+            else:
+                logging.info(f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE.")
+                HUD += f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE."
             if DEATH:
                 HUD += DEATH
 
         else:
-            logging.debug(f"{self.NAME} attacked {ENEMY.NAME} and failed.")
-            HUD += f"\n{self.NAME} attacked {ENEMY.NAME} and failed."
+            if WEAPON:
+                logging.debug(f"{self.NAME} attacked {ENEMY.NAME} with {WEAPON.NAME} and failed.")
+                HUD += f"\n{self.NAME} attacked {ENEMY.NAME} with {WEAPON.NAME} and failed."
+            else:
+                logging.debug(f"{self.NAME} attacked {ENEMY.NAME} and failed.")
+                HUD += f"\n{self.NAME} attacked {ENEMY.NAME} and failed."
         
         UPDATE_DISPLAY("INFO", DISPLAY["INFO"]+HUD)
 
@@ -135,9 +153,17 @@ class MOB(ENTITY):
     
     
     def DIE(self):
-        REMOVE_ENTITY(self)
+        _WEAPON = self.INVENTORY["WEAPON"]
+        if _WEAPON:
+            _WEAPON.POSITION = self.POSITION
+        _ARMOR = self.INVENTORY["ARMOR"]
+        if _ARMOR:
+            _ARMOR.POSITION = self.POSITION
+        for ITEM in self.INVENTORY["ITEMS"]:
+            ITEM.POSITION = self.POSITION
         MESSAGE = f"{self.NAME} died."
-        logging.debug(MESSAGE)
+        logging.info(MESSAGE)
+        REMOVE_ENTITY(self)
 
         return True
         

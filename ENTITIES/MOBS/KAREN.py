@@ -2,6 +2,7 @@ from ENTITIES.MOBS.MOB import MOB
 from ENTITIES.MOBS.AI.FOLLOW_PLAYER import ATTACK_PLAYER
 from ENTITIES.ITEMS.MELEE_WEAPONS.SCIMITAR import SCIMITAR
 from ENTITIES.ITEMS.ARMOR.LEATHER_ARMOR import LEATHER_ARMOR
+from LOGIC.MATH import ROLL
 
 
 class KAREN(MOB):
@@ -41,3 +42,13 @@ class KAREN(MOB):
 
     def UPDATE(self, *args, **kwargs):
         ATTACK_PLAYER(self)
+
+    
+    def HEALTH_ROLL():
+        return ROLL(2, 6)
+    
+    def DEFAULT_ITEMS(self):
+        self.INVENTORY["WEAPON"] = SCIMITAR()
+        self.INVENTORY["ARMOR"] = LEATHER_ARMOR()
+        self.INVENTORY["SHIELD"] = True
+    

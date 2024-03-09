@@ -2,11 +2,25 @@ import random
 import logging
 import math
 
+from ENTITIES.MOBS.ABORIGINE import ABORIGINE
+from ENTITIES.MOBS.BABOON import BABOON
+from ENTITIES.MOBS.BAT import BAT
+from ENTITIES.MOBS.FROG import FROG
+from ENTITIES.MOBS.GIANT_FIRE_BEETLE import GIANT_FIRE_BEETLE
 from ENTITIES.MOBS.KAREN import KAREN
+from ENTITIES.MOBS.RAT import RAT
+from ENTITIES.MOBS.GIANT_RAT import GIANT_RAT
+from ENTITIES.MOBS.SCORPION import SCORPION
+from ENTITIES.MOBS.SPIDER import SPIDER
+from ENTITIES.MOBS.BANDIT import BANDIT
+from ENTITIES.MOBS.GUARD import GUARD
+from ENTITIES.MOBS.KOBOLD import KOBOLD
+from ENTITIES.MOBS.PITBULL import PITBULL
+from ENTITIES.MOBS.FLYING_SNAKE import FLYING_SNAKE
+from ENTITIES.MOBS.APE import APE
 from WORLD.LOCATIONS.LOCATION_ID import LOCATION_ID
-from LOGIC.MATH import ROLL
 import WORLD.GAME_WORLD as _WORLD
-from WORLD.GLOBAL import PLAYERS, MOBS, REMOVE_ENTITY, GLOBAL_FLAGS, CONTAINERS, ITEMS
+from WORLD.GLOBAL import PLAYERS, MOBS, REMOVE_ENTITY, GLOBAL_FLAGS, CONTAINERS
 from ENTITIES.ITEMS.CONTAINERS.CHEST import CHEST
 from ENTITIES.MOBS.PLAYER.PLAYER import PLAYER
 from LOGIC.FUNCTIONS import LOOT
@@ -26,9 +40,9 @@ def PLAYER_SPAWN(COUNT):
 def SPAWN():
     global GLOBAL_FLAGS
     LEVEL, REALM, DEBUG = GLOBAL_FLAGS["LEVEL"], GLOBAL_FLAGS["REALM"], GLOBAL_FLAGS["DEBUG"]
-    KAREN_COUNT = LEVEL**2
+    LEVEL_XP = LEVEL*10
 
-    print("LOADING LEVEL...")
+    logging.info("LOADING LEVEL...")
     for PLAYER in PLAYERS:
         PLAYER.POSITION[2:4] = [LEVEL*2, REALM]
         PLAYER.XP_LEVEL()
@@ -48,23 +62,35 @@ def SPAWN():
         MIN_X = int(min(MIN_X, ROOM.MIN_X))
         MIN_Y = int(min(MIN_Y, ROOM.MIN_Y))
 
-    if KAREN_COUNT:
+    while LEVEL_XP >= 10:
+        logging.info(f"ADDING MONSTERS - {LEVEL_XP} XP REMAINING.")
+        _LOCATION = None
+        COUNT = 0
+        while not _LOCATION or _LOCATION.START or _LOCATION.VICTORY:
+            logging.info(f"Attempting to add MONSTER... {COUNT}")
+            _POSITION = [random.randint(MIN_X, MAX_X), random.randint(MIN_Y, MAX_Y), (LEVEL-1)*2, REALM]
+            _LOCATION = LOCATION_ID(*_POSITION[0:2])
+            COUNT += 1
+            if COUNT > 1024:
+                logging.debug("UNABLE TO SPAWN MONSTER.")
+                break
         
-        for i in range(KAREN_COUNT):
-            print(f"ADDING MONSTERS: {i+1}/{KAREN_COUNT}")
-            _LOCATION = None
-            COUNT = 0
-            while not _LOCATION or _LOCATION.START or _LOCATION.VICTORY:
-                logging.debug(f"Attempting to add KAREN... {COUNT}")
-                _POSITION = [random.randint(MIN_X, MAX_X), random.randint(MIN_Y, MAX_Y), LEVEL*2, REALM]
-                _LOCATION = LOCATION_ID(*_POSITION[0:2])
-                COUNT += 1
-                if COUNT > 1024:
-                    break
-                 
-            _KAREN = KAREN(_POSITION, HEALTH=ROLL(2, 6))
+        MONSTERS = [FROG, # 0 XP
+                    ABORIGINE, BABOON, BAT, GIANT_FIRE_BEETLE, RAT, SCORPION, SPIDER, # 10 XP
+                    BANDIT, FLYING_SNAKE, GIANT_RAT, GUARD, KOBOLD, PITBULL, #25 XP
+                    KAREN, # 50 XP
+                    APE #100 XP
+                    ]
+        _MONSTER_CLASS = random.choice(MONSTERS)
+        _MONSTER = _MONSTER_CLASS(_POSITION, _MONSTER_CLASS.HEALTH_ROLL())
+        if _MONSTER.EXPERIENCE_POINTS <= LEVEL_XP and _MONSTER.EXPERIENCE_POINTS <= LEVEL*10:
+            _MONSTER.DEFAULT_ITEMS()
+            LEVEL_XP -= _MONSTER.EXPERIENCE_POINTS
+        else:
+            REMOVE_ENTITY(_MONSTER, SAFE=False)
+
     
-    print(f"ADDING CHESTS...")
+    logging.info("ADDING CHESTS...")
     EMPTY_ROOMS = list(_WORLD.GAME_WORLD[LEVEL])
     
     CHEST_COUNT = 0
@@ -84,7 +110,7 @@ def SPAWN():
             
     
     CHEST_GOLD = LEVEL
-    while CHEST_GOLD and len(CONTAINERS):
+    while CHEST_GOLD > 0 and len(CONTAINERS) > 0:
         for container in CONTAINERS:
             if random.randint(1, len(CONTAINERS)) == 1:
                 _LOOT = random.choice(LOOT)
@@ -104,9 +130,6 @@ def SPAWN():
                     else:
                         REMOVE_ENTITY(_LOOT, SAFE=False)
                         logging.info(f"Discarded Loot: {_LOOT.NAME}.")
-
-
-
 
     if DEBUG:
             for ROOM in _WORLD.GAME_WORLD[LEVEL]:

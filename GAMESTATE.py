@@ -9,6 +9,9 @@ import attr
 import tcod.console
 import tcod.event
 
+Q_ACTIVE = False
+E_ACTIVE = False
+
 @attr.s
 class GAMESTATE:
     PLAYER_COUNT = 1
@@ -17,11 +20,12 @@ class GAMESTATE:
     
 
     def ON_DRAW(self, CONSOLE: tcod.console.Console) -> None:
+        LEVEL = GLOBAL_FLAGS["LEVEL"]
         PLAYER = PLAYERS[0]
         if not PLAYER:
-            CONSOLE.print(CONSOLE.width//2, CONSOLE.height//2, "GAME OVER")
+            SCORE, GOLD = GLOBAL_FLAGS["SCORE"], GLOBAL_FLAGS["GOLD"]
+            CONSOLE.print((CONSOLE.width//2)-5, (CONSOLE.height//2)-5, f"GAME OVER\nLEVEL: {LEVEL}\nSCORE: {SCORE}\nGOLD: {GOLD}")
             return
-        LEVEL = GLOBAL_FLAGS["LEVEL"]
         for ROOM in GAME_WORLD[LEVEL]:
             if ROOM and ROOM.FOUND:
                 ROOM.DRAW(CONSOLE)
@@ -37,6 +41,9 @@ class GAMESTATE:
 
     def ON_EVENT(self, EVENT):
         PLAYER = PLAYERS[0]
+        global Q_ACTIVE
+        global E_ACTIVE
+        _MOVE = None
         match EVENT:
             case tcod.event.Quit():
                 raise SystemExit()
@@ -63,14 +70,136 @@ class GAMESTATE:
             case tcod.event.KeyDown(sym=tcod.event.KeySym.i):
                 PLAYER.OPEN_INVENTORY()
             case tcod.event.KeyDown(sym=tcod.event.KeySym.BACKSPACE):
+                E_ACTIVE = False
+                Q_ACTIVE = False
                 UPDATE_DISPLAY("INFO", "")
             case tcod.event.KeyDown(sym=tcod.event.KeySym.l):
                 self.UPDATE("LOOT")
             case tcod.event.KeyDown(sym=tcod.event.KeySym.r):
                 self.UPDATE("LONG REST")
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.q):
+                if E_ACTIVE:
+                    UPDATE_DISPLAY("INFO", f"\nEQUIP CANCELLED.")
+                    E_ACTIVE = False
+                if Q_ACTIVE:
+                    UPDATE_DISPLAY("INFO", f"\nDROP CANCELLED.")
+                    Q_ACTIVE = False
+                else:
+                    PLAYER.SELECT_ITEM()
+                    Q_ACTIVE = True
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.e):
+                if Q_ACTIVE:
+                    UPDATE_DISPLAY("INFO", f"\nDROP CANCELLED.")
+                    Q_ACTIVE = False
+                if E_ACTIVE:
+                    UPDATE_DISPLAY("INFO", f"\nEQUIP CANCELLED.")
+                    E_ACTIVE = False
+                else:
+                    PLAYER.SELECT_ITEM()
+                    E_ACTIVE = True
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.N0):
+                _NUM = 0
+                if Q_ACTIVE:
+                    _MOVE = "DROP"
+                    Q_ACTIVE = False
+                if E_ACTIVE:
+                    _MOVE = "EQUIP"
+                    E_ACTIVE = False
+                if _MOVE is not None and len(PLAYER.INVENTORY["ITEMS"]) > _NUM:
+                    self.UPDATE(_MOVE, _NUM)
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.N1):
+                _NUM = 1
+                if Q_ACTIVE:
+                    _MOVE = "DROP"
+                    Q_ACTIVE = False
+                if E_ACTIVE:
+                    _MOVE = "EQUIP"
+                    E_ACTIVE = False
+                if _MOVE is not None and len(PLAYER.INVENTORY["ITEMS"]) > _NUM:
+                    self.UPDATE(_MOVE, _NUM)
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.N2):
+                _NUM = 2
+                if Q_ACTIVE:
+                    _MOVE = "DROP"
+                    Q_ACTIVE = False
+                if E_ACTIVE:
+                    _MOVE = "EQUIP"
+                    E_ACTIVE = False
+                if _MOVE is not None and len(PLAYER.INVENTORY["ITEMS"]) > _NUM:
+                    self.UPDATE(_MOVE, _NUM)
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.N3):
+                _NUM = 3
+                if Q_ACTIVE:
+                    _MOVE = "DROP"
+                    Q_ACTIVE = False
+                if E_ACTIVE:
+                    _MOVE = "EQUIP"
+                    E_ACTIVE = False
+                if _MOVE is not None and len(PLAYER.INVENTORY["ITEMS"]) > _NUM:
+                    self.UPDATE(_MOVE, _NUM)
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.N4):
+                _NUM = 4
+                if Q_ACTIVE:
+                    _MOVE = "DROP"
+                    Q_ACTIVE = False
+                if E_ACTIVE:
+                    _MOVE = "EQUIP"
+                    E_ACTIVE = False
+                if _MOVE is not None and len(PLAYER.INVENTORY["ITEMS"]) > _NUM:
+                    self.UPDATE(_MOVE, _NUM)
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.N5):
+                _NUM = 5
+                if Q_ACTIVE:
+                    _MOVE = "DROP"
+                    Q_ACTIVE = False
+                if E_ACTIVE:
+                    _MOVE = "EQUIP"
+                    E_ACTIVE = False
+                if _MOVE is not None and len(PLAYER.INVENTORY["ITEMS"]) > _NUM:
+                    self.UPDATE(_MOVE, _NUM)
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.N6):
+                _NUM = 6
+                if Q_ACTIVE:
+                    _MOVE = "DROP"
+                    Q_ACTIVE = False
+                if E_ACTIVE:
+                    _MOVE = "EQUIP"
+                    E_ACTIVE = False
+                if _MOVE is not None and len(PLAYER.INVENTORY["ITEMS"]) > _NUM:
+                    self.UPDATE(_MOVE, _NUM)
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.N7):
+                _NUM = 7
+                if Q_ACTIVE:
+                    _MOVE = "DROP"
+                    Q_ACTIVE = False
+                if E_ACTIVE:
+                    _MOVE = "EQUIP"
+                    E_ACTIVE = False
+                if _MOVE is not None and len(PLAYER.INVENTORY["ITEMS"]) > _NUM:
+                    self.UPDATE(_MOVE, _NUM)
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.N8):
+                _NUM = 8
+                if Q_ACTIVE:
+                    _MOVE = "DROP"
+                    Q_ACTIVE = False
+                if E_ACTIVE:
+                    _MOVE = "EQUIP"
+                    E_ACTIVE = False
+                if _MOVE is not None and len(PLAYER.INVENTORY["ITEMS"]) > _NUM:
+                    self.UPDATE(_MOVE, _NUM)
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.N9):
+                _NUM = 9
+                if Q_ACTIVE:
+                    _MOVE = "DROP"
+                    Q_ACTIVE = False
+                if E_ACTIVE:
+                    _MOVE = "EQUIP"
+                    E_ACTIVE = False
+                if _MOVE is not None and len(PLAYER.INVENTORY["ITEMS"]) > _NUM:
+                    self.UPDATE(_MOVE, _NUM)
 
     
-    def UPDATE(self, MOVE):
+    def UPDATE(self, MOVE, NUM=None):
         PLAYER = PLAYERS[0]
         if not PLAYER:
             return
@@ -78,7 +207,7 @@ class GAMESTATE:
         _REST = True
         for MOB in MOBS:
             if MOB and LOCATION_ID(*MOB.POSITION[0:2]) == LOCATION_ID(*PLAYER.POSITION[0:2]):
-                MOB.UPDATE(MOVE)
+                MOB.UPDATE(MOVE, NUM)
                 if MOB != PLAYER:
                     _REST = False
         if MOVE == "LONG REST" and _REST:

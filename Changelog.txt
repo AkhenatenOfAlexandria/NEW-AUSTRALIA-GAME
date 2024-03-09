@@ -1,3 +1,16 @@
+Alpha 1.1.0:
+    Changes:
+        - Q now throws items.
+        - E now equips weapons.
+        - Buffed Karens:
+            - Now spawn with SHIELDS, LEATHER ARMOR, and SCIMITARS.
+        - Added DAGGERS, SPEARS, CHAIN SHIRTS, and PRONENESS.
+        - Added ABORIGINES (including BANDITS and GUARDS), APES, BABOONS, BATS, FLYING SNAKES, FROGS, GIANT FIRE BEETLES, GIANT RATS, KOBOLDS, LIZARDS, PITBULLS, RATS, SCORPIONS, and SPIDERS.
+        - Changed monster spawning rules.
+    Patches:
+        - Patched some display bugs.
+        - Fixed infinite loop in chest loot generation.
+
 Alpha 1.0.2:
     - Escape key now quits game.
     - Player can now open and close Chests and loot Gold from open Chests.
@@ -7,6 +20,7 @@ Alpha 1.0.2:
     - Chest Gold is now equal to the Level instead of 10%.
     - Items now display inventory index.
     - Display now has 20 lines instead of 10.
+    - Chests now spawn with loot other than Gold.
 
 Alpha 1.0.1
     - Window size changed from 100*75 to 75*58.

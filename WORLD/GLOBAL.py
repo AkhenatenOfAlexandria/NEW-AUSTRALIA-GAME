@@ -9,7 +9,9 @@ GLOBAL_FLAGS = {
     "COMBAT": False,
     "LEVEL": 0,
     "REALM": 0,
-    "NEW LEVEL": False
+    "NEW LEVEL": False,
+    "SCORE": None,
+    "GOLD": None
 }
 
 DISPLAY = {
@@ -61,7 +63,7 @@ def UPDATE_DISPLAY(KEY, VALUE, APPEND=False):
     if KEY == "HUD":
         DISPLAY[KEY] = VALUE
     elif KEY == "INFO":
-        DISPLAY[KEY] = '\n'+VALUE
+        DISPLAY[KEY] = VALUE
     _DEBUG = f"{KEY} UPDATED: {DISPLAY[KEY]}"
     RETURN = DISPLAY[KEY]
     if GLOBAL_FLAGS["DEBUG"]:
@@ -97,4 +99,4 @@ def REMOVE_ENTITY(ENTITY, SAFE=True):
             else:
                 LIST.remove(ENTITY)
             if DEBUG:
-                logging.debug(f"Removed {ENTITY.NAME} from {LIST}.")
+                logging.info(f"Removed {ENTITY.NAME} from {LIST}.")

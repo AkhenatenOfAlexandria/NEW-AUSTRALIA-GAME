@@ -2,10 +2,13 @@ from ENTITIES.MOBS.MOB import MOB
 import WORLD.GAME_WORLD as _WORLD
 from WORLD.LOCATIONS.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import ROLL, DISTANCE
-from WORLD.GLOBAL import MOBS, PLAYERS, ADD_ENTITY
-from WORLD.GLOBAL import GLOBAL_FLAGS, UPDATE_FLAG, CONTAINERS, UPDATE_DISPLAY
+from WORLD.GLOBAL import MOBS, PLAYERS, ADD_ENTITY, DISPLAY, UPDATE_FLAG, CONTAINERS, UPDATE_DISPLAY, REMOVE_ENTITY
+from ENTITIES.ITEMS.MELEE_WEAPONS.MELEE_WEAPON import MELEE_WEAPON
 import logging
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+
+import tcod.console
+import tcod.event
 
 
 class PLAYER(MOB):
@@ -98,38 +101,51 @@ class PLAYER(MOB):
         return False
     
 
-    def UPDATE(self, MOVE):
+    def UPDATE(self, MOVE, NUM):
         _LOCATION = LOCATION_ID(*self.POSITION[0:2])
         if MOVE in ["LEFT", "RIGHT", "UP", "DOWN"]:
-            POSITION = self.MOVE(MOVE)
-            STAY = False
-            for MOB in MOBS:
-                if MOB and POSITION == MOB.POSITION[0:2]:
-                    STAY = True
-                    self.COMBAT_CHECK(MOB)
-                    break
-            if not STAY:
-                self.POSITION[0:2] = POSITION
-                _LOCATION.FOUND = True
+            self._MOVE(MOVE, _LOCATION)
         elif MOVE == "SPACE":
-            if _LOCATION.VICTORY:
-                UPDATE_FLAG("NEW LEVEL", True)
-            elif len(_LOCATION.LOCAL_ITEMS):
-                for ITEM in _LOCATION.LOCAL_ITEMS:
-                    if ITEM in CONTAINERS and DISTANCE(*self.POSITION[0:2], *ITEM.POSITION[0:2]) < 2:
-                        if ITEM.OPEN:
-                            ITEM.CLOSE_CONTAINER()
-                        else:
-                            ITEM.OPEN_CONTAINER()
+            self.SPACE(_LOCATION)
         elif MOVE == "LOOT":
             self.LOOT()
-        
+        elif MOVE == "DROP":
+            self.DROP_ITEM(NUM)
+        elif MOVE == "EQUIP":
+            self.EQUIP_ITEM(NUM)
+    
+    def _MOVE(self, MOVE, _LOCATION):
+        POSITION = self.MOVE(MOVE)
+        STAY = False
+        for MOB in MOBS:
+            if MOB and POSITION == MOB.POSITION[0:2]:
+                STAY = True
+                self.COMBAT_CHECK(MOB)
+                break
+        if not STAY:
+            self.POSITION[0:2] = POSITION
+            _LOCATION.FOUND = True
+    
+    
+    def SPACE(self, _LOCATION):
+        if self.PRONE:
+            self.PRONE = False
+            UPDATE_DISPLAY("INFO", DISPLAY["INFO"]+f"\n{self.NAME} is no longer PRONE.")
+        if _LOCATION.VICTORY:
+                UPDATE_FLAG("NEW LEVEL", True)
+        elif len(_LOCATION.LOCAL_ITEMS):
+            for ITEM in _LOCATION.LOCAL_ITEMS:
+                if ITEM in CONTAINERS and DISTANCE(*self.POSITION[0:2], *ITEM.POSITION[0:2]) < 2:
+                    if ITEM.OPEN:
+                        ITEM.CLOSE_CONTAINER()
+                    else:
+                        ITEM.OPEN_CONTAINER()
 
     def OPEN_INVENTORY(self):
-        DISPLAY = "\n"
-        DISPLAY += f"\nEXPERIENCE LEVEL: {self.EXPERIENCE_LEVEL}"
-        DISPLAY += f"\nEXPERIENCE POINTS: {self.EXPERIENCE}"
-        DISPLAY += "\nINVENTORY:"
+        _DISPLAY = "\n"
+        _DISPLAY += f"\nEXPERIENCE LEVEL: {self.EXPERIENCE_LEVEL}"
+        _DISPLAY += f"\nEXPERIENCE POINTS: {self.EXPERIENCE}"
+        _DISPLAY += "\nINVENTORY:"
         if self.INVENTORY["WEAPON"]:
             WEAPON = self.INVENTORY["WEAPON"].NAME
         else:
@@ -138,18 +154,61 @@ class PLAYER(MOB):
             ARMOR = self.INVENTORY["ARMOR"].NAME
         else:
             ARMOR = None
-        DISPLAY += f"\n     WEAPON: {WEAPON}"
-        DISPLAY += f"\n     ARMOR: {ARMOR}"
+        _DISPLAY += f"\n     WEAPON: {WEAPON}"
+        _DISPLAY += f"\n     ARMOR: {ARMOR}"
         if self.INVENTORY["SHIELD"]:
-            DISPLAY += "\n     SHIELD"
-        DISPLAY += f"\n     GOLD: {self.INVENTORY['GOLD']}"
-        DISPLAY += f"\n     ITEMS:"
+            _DISPLAY += "\n     SHIELD"
+        _DISPLAY += f"\n     GOLD: {self.INVENTORY['GOLD']}"
+        _DISPLAY += f"\n     ITEMS:"
         
         for ITEM in self.INVENTORY["ITEMS"]:
-            DISPLAY += f"\n          {self.INVENTORY['ITEMS'].index(ITEM)}. {ITEM.NAME}"
+            _DISPLAY += f"\n          {self.INVENTORY['ITEMS'].index(ITEM)}. {ITEM.NAME}"
         
-        UPDATE_DISPLAY("INFO", DISPLAY)
+        UPDATE_DISPLAY("INFO", _DISPLAY)
+    
 
+    def SELECT_ITEM(self):
+        self.OPEN_INVENTORY()
+        _DISPLAY = DISPLAY["INFO"]
+        _DISPLAY += "\n\nSELECT ITEM"
+        UPDATE_DISPLAY("INFO", _DISPLAY)
+
+    
+    def DROP_ITEM(self, NUM):
+        _ITEMS = self.INVENTORY["ITEMS"]
+
+        try:
+            _ITEM = _ITEMS.pop(NUM)
+            _ITEM.POSITION = self.POSITION
+            _DISPLAY = f"\nDROPPED {_ITEM.NAME}"
+            
+            UPDATE_DISPLAY("INFO", _DISPLAY)
+
+        except IndexError as e:
+            logging.debug(f"IndexError: {e}")
+            logging.debug(f"NUM: {NUM}\nITEMS:{_ITEMS}")
+        
+
+    
+    def EQUIP_ITEM(self, NUM):
+        _ITEMS = self.INVENTORY["ITEMS"]
+        
+        try:
+            _ITEM = _ITEMS[NUM]
+            if isinstance(_ITEM, MELEE_WEAPON):
+                _WEAPON = self.INVENTORY["WEAPON"]
+                if _WEAPON:
+                    _ITEMS.append(_WEAPON)
+                self.INVENTORY["WEAPON"] = _ITEM
+                _ITEMS.remove(_ITEM)
+                _DISPLAY = f"\nEQUIPPED {_ITEM.NAME}"
+            
+            UPDATE_DISPLAY("INFO", _DISPLAY)
+
+        except IndexError as e:
+            logging.debug(f"IndexError: {e}")
+            logging.debug(f"NUM: {NUM}\nITEMS:{_ITEMS}")
+        
     
     def LOOT(self):
         _LOCATION = LOCATION_ID(*self.POSITION[0:2])
@@ -164,3 +223,26 @@ class PLAYER(MOB):
                         self.INVENTORY["ITEMS"].append(_ITEM)
                         ITEM.REMOVE_ITEM(_ITEM)
                     ITEM.VIEW_CONTENTS()
+    
+
+    def DIE(self):
+        _GOLD = self.INVENTORY["GOLD"]
+        _WEAPON = self.INVENTORY["WEAPON"]
+        _ARMOR = self.INVENTORY["ARMOR"]
+        if _WEAPON:
+            _WEAPON.POSITION = self.POSITION
+            _GOLD += _WEAPON.PRICE
+        if _ARMOR:
+            _ARMOR.POSITION = self.POSITION
+            _GOLD += _ARMOR.PRICE
+        for ITEM in self.INVENTORY["ITEMS"]:
+            ITEM.POSITION = self.POSITION
+            _GOLD += ITEM.PRICE
+        UPDATE_FLAG("SCORE", self.EXPERIENCE)
+        UPDATE_FLAG("GOLD", _GOLD)
+        MESSAGE = f"{self.NAME} died."
+        logging.info(MESSAGE)
+        REMOVE_ENTITY(self)
+
+        return True
+    

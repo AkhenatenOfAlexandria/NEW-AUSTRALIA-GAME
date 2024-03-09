@@ -26,7 +26,7 @@ class CONTAINER(ITEM):
 
 
     def VIEW_CONTENTS(self):
-        DISPLAY = f"\n{self.NAME}:"
+        DISPLAY = f"\n\n{self.NAME}:"
         if self.GOLD:
             DISPLAY+=f"\n     GOLD: {self.GOLD}"
         for item in self.CONTENTS:
