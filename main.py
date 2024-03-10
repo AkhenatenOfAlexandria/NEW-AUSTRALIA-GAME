@@ -41,7 +41,7 @@ def MAIN():
 
 			SPAWN()
 
-			UPDATE_DISPLAY("INFO", "\n")
+			UPDATE_DISPLAY("INFO", "\n\n")
 
 			while GAME_RUNNING:
 				CONSOLE.clear()

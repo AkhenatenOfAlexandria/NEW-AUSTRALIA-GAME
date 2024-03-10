@@ -4,21 +4,22 @@ from LOGIC.MATH import ROLL
 from WORLD.GLOBAL import UPDATE_DISPLAY, DISPLAY
 
 import logging
+import math
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 
-class GIANT_FIRE_BEETLE(MOB):
+class GIANT_CONSTRICTOR_SNAKE(MOB):
     def __init__(
             self,
             POSITION=[0,0,0,0],
-            STRENGTH=8,
-            DEXTERITY=10,
+            STRENGTH=19,
+            DEXTERITY=14,
             CONSTITUTION=12,
             INTELLIGENCE=1,
-            WISDOM=7,
+            WISDOM=10,
             CHARISMA=3,
-            HEALTH=4,
+            HEALTH=13,
             *args, **kwargs
             ):
            super().__init__(
@@ -30,24 +31,31 @@ class GIANT_FIRE_BEETLE(MOB):
             WISDOM,
             CHARISMA,
             HEALTH,
-            "GIANT FIRE BEETLE",
+            "CONSTRICTOR SNAKE",
             *args, **kwargs
             )
            
-           self.CHARACTER = "V"
+           self.CHARACTER = "s"
            self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
 
-           self.EXPERIENCE_POINTS = 10
+           self.EXPERIENCE_POINTS = 450
 
            self.SPEED = 6
     
 
     def UPDATE(self, *args, **kwargs):
-        ATTACK_PLAYER(self)
+        if self.GRAPPLED:
+            pass
+        else:
+            ATTACK_PLAYER(self)
 
     
     def HEALTH_ROLL():
-        return ROLL(1, 6) + 1
+        return ROLL(2, 10) + 2
+    
+
+    def GRAPPLE_CHECK(self):
+        return 14
     
     
     def DEFAULT_ITEMS(self):
@@ -59,7 +67,7 @@ class GIANT_FIRE_BEETLE(MOB):
         GAME_RUNNING = True, True
         
         CHECK = ROLL(1, 20)
-        _CHECK = CHECK + 1
+        _CHECK = CHECK + 6
 
         HUD = ""
 
@@ -74,18 +82,22 @@ class GIANT_FIRE_BEETLE(MOB):
                 HUD += f"\nCRITICAL HIT: "
             else:
                 HUD += "\n"
-            DAMAGE = ROLL(1, 6) + 1
+            DAMAGE = ROLL(2,8)+4
+            
             ENEMY.HEALTH -= DAMAGE
 
+            self.GRAPPLED = ENEMY
+            ENEMY.GRAPPLER = self
+
+            _HUD = f"{self.NAME} grappled {ENEMY.NAME}, dealing {DAMAGE} DAMAGE."
+            logging.info(_HUD)
+            HUD += _HUD
             if ENEMY.HEALTH <= 0:
                 DEATH = f"\n{ENEMY.NAME} died."
                 
                 GAME_RUNNING = ENEMY.DIE()
                 if hasattr(self, 'EXPERIENCE_LEVEL') and hasattr(ENEMY, 'EXPERIENCE_POINTS'):
                     self.EXPERIENCE += ENEMY.EXPERIENCE_POINTS
-                
-            logging.info(f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE.")
-            HUD += f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE."
             if DEATH:
                 HUD += DEATH
 

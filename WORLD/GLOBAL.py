@@ -16,7 +16,7 @@ GLOBAL_FLAGS = {
 
 DISPLAY = {
     "HUD" : None,
-    "INFO" : "\n"
+    "INFO" : "\n\n"
 }
 
 DEBUG = GLOBAL_FLAGS["DEBUG"]
@@ -86,7 +86,7 @@ def ADD_ENTITY(ENTITY, *args):
         if LIST in LISTS:
             LIST.append(ENTITY)
             if GLOBAL_FLAGS["DEBUG"]:
-                logging.debug(f"Added {ENTITY.TYPE} to {LIST}.")
+                logging.info(f"Added {ENTITY.TYPE}.")
         else:
             logging.error(f"ERROR: LIST does not exist.")
 
@@ -99,4 +99,4 @@ def REMOVE_ENTITY(ENTITY, SAFE=True):
             else:
                 LIST.remove(ENTITY)
             if DEBUG:
-                logging.info(f"Removed {ENTITY.NAME} from {LIST}.")
+                logging.info(f"Removed {ENTITY.NAME}.")

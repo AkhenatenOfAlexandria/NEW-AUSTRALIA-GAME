@@ -1,5 +1,7 @@
 import math
 import random
+import logging
+logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 
 def VECTOR_DIRECTION_RADIANS(X, Y):   
@@ -45,9 +47,20 @@ def OVERLAP(A, B):
     AX1, AY1, AX2, AY2 = A
     BX1, BY1, BX2, BY2 = B
 
-    if AX1 >= BX2 or AY1 >= BY2 or AX2 <= BX1 or AY2 <= BY1:
+    if AX1 >= BX2:
+        # logging.debug(f"{AX1} >= {BX2}.")
+        return False
+    if AY1 >= BY2:
+        # logging.debug(f"{AY1} >= {BY2}.")
+        return False
+    if AX2 <= BX1:
+        # logging.debug(f"{AX2} <= {BX1}.")
+        return False
+    if AY2 <= BY1:
+        # logging.debug(f"{AY2} <= {BY1}.")
         return False
     else:
+        # logging.debug("Overlap found.")
         return True
 
 

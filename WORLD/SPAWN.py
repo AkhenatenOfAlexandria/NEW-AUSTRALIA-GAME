@@ -17,6 +17,12 @@ from ENTITIES.MOBS.GUARD import GUARD
 from ENTITIES.MOBS.KOBOLD import KOBOLD
 from ENTITIES.MOBS.PITBULL import PITBULL
 from ENTITIES.MOBS.FLYING_SNAKE import FLYING_SNAKE
+from ENTITIES.MOBS.VENOMOUS_SNAKE import VENOMOUS_SNAKE
+from ENTITIES.MOBS.CONSTRICTOR_SNAKE import CONSTRICTOR_SNAKE
+from ENTITIES.MOBS.STIRGE import STIRGE
+from ENTITIES.MOBS.GIANT_BAT import GIANT_BAT
+from ENTITIES.MOBS.GIANT_CENTIPEDE import GIANT_CENTIPEDE
+from ENTITIES.MOBS.GIANT_CONSTRICTOR_SNAKE import GIANT_CONSTRICTOR_SNAKE
 from ENTITIES.MOBS.APE import APE
 from WORLD.LOCATIONS.LOCATION_ID import LOCATION_ID
 import WORLD.GAME_WORLD as _WORLD
@@ -56,82 +62,102 @@ def SPAWN():
     MIN_X = 0
     MAX_Y = 0
     MIN_Y = 0
-    for ROOM in _WORLD.GAME_WORLD[LEVEL]:
+    _ROOMS_ = _WORLD.GAME_WORLD[LEVEL]
+
+    MONSTERS = [FROG, # 0 XP
+            ABORIGINE, BABOON, BAT, GIANT_FIRE_BEETLE, RAT, SCORPION, SPIDER, # 10 XP
+            BANDIT, FLYING_SNAKE, GIANT_RAT, GUARD, KOBOLD, PITBULL, VENOMOUS_SNAKE, STIRGE, #25 XP
+            CONSTRICTOR_SNAKE, GIANT_BAT, GIANT_CENTIPEDE, KAREN, # 50 XP
+            APE, GIANT_CONSTRICTOR_SNAKE #100 XP
+        ]
+    
+    for ROOM in _ROOMS_:
         MAX_X = int(max(MAX_X, ROOM.MAX_X))
         MAX_Y = int(max(MAX_Y, ROOM.MAX_Y))
         MIN_X = int(min(MIN_X, ROOM.MIN_X))
         MIN_Y = int(min(MIN_Y, ROOM.MIN_Y))
 
-    while LEVEL_XP >= 10:
-        logging.info(f"ADDING MONSTERS - {LEVEL_XP} XP REMAINING.")
-        _LOCATION = None
-        COUNT = 0
-        while not _LOCATION or _LOCATION.START or _LOCATION.VICTORY:
-            logging.info(f"Attempting to add MONSTER... {COUNT}")
-            _POSITION = [random.randint(MIN_X, MAX_X), random.randint(MIN_Y, MAX_Y), (LEVEL-1)*2, REALM]
-            _LOCATION = LOCATION_ID(*_POSITION[0:2])
-            COUNT += 1
-            if COUNT > 1024:
-                logging.debug("UNABLE TO SPAWN MONSTER.")
-                break
-        
-        MONSTERS = [FROG, # 0 XP
-                    ABORIGINE, BABOON, BAT, GIANT_FIRE_BEETLE, RAT, SCORPION, SPIDER, # 10 XP
-                    BANDIT, FLYING_SNAKE, GIANT_RAT, GUARD, KOBOLD, PITBULL, #25 XP
-                    KAREN, # 50 XP
-                    APE #100 XP
-                    ]
-        _MONSTER_CLASS = random.choice(MONSTERS)
-        _MONSTER = _MONSTER_CLASS(_POSITION, _MONSTER_CLASS.HEALTH_ROLL())
-        if _MONSTER.EXPERIENCE_POINTS <= LEVEL_XP and _MONSTER.EXPERIENCE_POINTS <= LEVEL*10:
-            _MONSTER.DEFAULT_ITEMS()
-            LEVEL_XP -= _MONSTER.EXPERIENCE_POINTS
-        else:
-            REMOVE_ENTITY(_MONSTER, SAFE=False)
+        logging.info(f"ADDING MONSTERS - {_ROOMS_.index(ROOM)}/{len(_ROOMS_)}.")
 
-    
+        if ROOM.VICTORY or ROOM.START:
+            pass
+        else:
+            if LEVEL < 5:
+                DIFFICULTY = random.choice([0, 25, 50, 75])
+            elif LEVEL < 7:
+                DIFFICULTY = random.choice([0, 50, 100, 150])
+            elif LEVEL < 9:
+                DIFFICULTY = random.choice([0, 75, 150, 200])
+            elif LEVEL < 12:
+                DIFFICULTY = random.choice([0, 125, 250, 375])
+            else:
+                DIFFICULTY = random.choice([0, 250, 500, 750])
+            COUNT = 1
+            MONSTER_COUNT = 0
+            _XP = 0
+            XP = 0
+            while _XP < DIFFICULTY and DIFFICULTY-_XP >= 10:
+                logging.info(f"Attempting to add MONSTER... {COUNT}")
+                if COUNT > 1024:
+                    logging.debug("UNABLE TO SPAWN MONSTER.")
+                    break
+                _MONSTER_CLASS = random.choice(MONSTERS)
+                _POSITION = [random.randint(ROOM.MIN_X+1, ROOM.MAX_X-1), random.randint(ROOM.MIN_Y+1, ROOM.MAX_Y-1), (LEVEL-1)*2, REALM]
+                _MONSTER = _MONSTER_CLASS(_POSITION, _MONSTER_CLASS.HEALTH_ROLL())
+                if _MONSTER.EXPERIENCE_POINTS <= (DIFFICULTY-_XP) and _MONSTER.EXPERIENCE_POINTS <= LEVEL*10:
+                    _MONSTER.DEFAULT_ITEMS()
+                    MONSTER_COUNT += 1
+                    XP += _MONSTER.EXPERIENCE_POINTS
+                    if MONSTER_COUNT == 1:
+                        _XP = XP*1.5
+                    elif MONSTER_COUNT == 2:
+                        _XP = XP*2
+                    elif 3 <= MONSTER_COUNT <= 6:
+                        _XP = XP*2.5
+                    elif 7 <= MONSTER_COUNT <= 10:
+                        _XP = XP*3
+                    elif 11 <= MONSTER_COUNT <= 14:
+                        _XP = XP*4
+                    else:
+                        _XP = XP*5
+                else:
+                    REMOVE_ENTITY(_MONSTER, SAFE=False)
+                COUNT += 1
+
     logging.info("ADDING CHESTS...")
-    EMPTY_ROOMS = list(_WORLD.GAME_WORLD[LEVEL])
+    _ROOMS = list(_WORLD.GAME_WORLD[LEVEL])
     
     CHEST_COUNT = 0
-    while True:
-        for ROOM in EMPTY_ROOMS:
+    while CHEST_COUNT < LEVEL:
+        for ROOM in _ROOMS:
             CHEST_SPAWN = random.randint(1, LEVEL)
-            if CHEST_SPAWN == LEVEL and ROOM.DESCRIPTION == "SMALL ROOM" and not ROOM.VICTORY:
+            if CHEST_SPAWN == LEVEL and ROOM.DESCRIPTION in ("SMALL ROOM", "LARGE ROOM") and not ROOM.VICTORY:
                 CHEST_POSITION = (random.randint(ROOM.MIN_X+1, ROOM.MAX_X-1), random.randint(ROOM.MIN_Y+1, ROOM.MAX_Y-1), LEVEL, 0)
                 ROOM.LOCAL_ITEMS.append(CHEST(CHEST_POSITION))
-                EMPTY_ROOMS.remove(ROOM)
+                if ROOM.DESCRIPTION == "SMALL ROOM":
+                    _ROOMS.remove(ROOM)
             CHEST_COUNT += 1
-            print(f"{CHEST_COUNT}/{LEVEL*2}")
+            logging.info(f"ADDING CHESTS: {CHEST_COUNT}/{LEVEL*2}")
             if CHEST_COUNT >= LEVEL:
                 break
-        if CHEST_COUNT >= LEVEL:
-                break
             
-    
+    logging.info(f"Adding LOOT....")
     CHEST_GOLD = LEVEL
-    while CHEST_GOLD > 0 and len(CONTAINERS) > 0:
+    while CHEST_GOLD > 0 and len(CONTAINERS):
         for container in CONTAINERS:
-            if random.randint(1, len(CONTAINERS)) == 1:
-                _LOOT = random.choice(LOOT)
-                logging.info(f"Loot selected: {_LOOT}")
-                if type(_LOOT) == str:
-                    container.GOLD = round(container.GOLD+0.01, 2)
-                    CHEST_GOLD = round(CHEST_GOLD-0.01, 2)
-                    _CHEST_COUNT = math.floor(LEVEL+CHEST_GOLD*10)
-                    print(f"{_CHEST_COUNT}/{LEVEL*2}")
-                elif len(container.CONTENTS) < 10:
-                    _LOOT = _LOOT()
-                    logging.info(f"LOOT PRICE: {_LOOT.PRICE}; CHEST GOLD: {CHEST_GOLD}")
-                    if CHEST_GOLD >= _LOOT.PRICE:
-                        container.ADD_ITEM(_LOOT)
-                        logging.info(f"Added Loot: {_LOOT.NAME}.")
-                        CHEST_GOLD -= _LOOT.PRICE
-                    else:
-                        REMOVE_ENTITY(_LOOT, SAFE=False)
-                        logging.info(f"Discarded Loot: {_LOOT.NAME}.")
-
-    if DEBUG:
-            for ROOM in _WORLD.GAME_WORLD[LEVEL]:
-                logging.debug(f"{ROOM.DESCRIPTION}:{ROOM.LOCAL_ITEMS}")
-    
+            _LOOT = random.choice(LOOT)
+            logging.debug(f"Loot selected: {_LOOT}")
+            if type(_LOOT) == str:
+                container.GOLD = round(container.GOLD+0.01, 2)
+                CHEST_GOLD = round(CHEST_GOLD-0.01, 2)
+                _CHEST_COUNT = math.floor(LEVEL+CHEST_GOLD*10)
+                logging.info(f"ADDING LOOT: {_CHEST_COUNT}/{LEVEL*2}")
+            else:
+                _LOOT = _LOOT()
+                logging.debug(f"LOOT PRICE: {_LOOT.PRICE}; CHEST GOLD: {CHEST_GOLD}")
+                if CHEST_GOLD >= _LOOT.PRICE:
+                    container.ADD_ITEM(_LOOT)
+                    CHEST_GOLD -= _LOOT.PRICE
+                else:
+                    REMOVE_ENTITY(_LOOT, SAFE=False)
+                    logging.debug(f"Discarded Loot: {_LOOT.NAME}.")

@@ -8,12 +8,12 @@ import logging
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 
-class GIANT_FIRE_BEETLE(MOB):
+class GIANT_CENTIPEDE(MOB):
     def __init__(
             self,
             POSITION=[0,0,0,0],
-            STRENGTH=8,
-            DEXTERITY=10,
+            STRENGTH=5,
+            DEXTERITY=14,
             CONSTITUTION=12,
             INTELLIGENCE=1,
             WISDOM=7,
@@ -30,14 +30,14 @@ class GIANT_FIRE_BEETLE(MOB):
             WISDOM,
             CHARISMA,
             HEALTH,
-            "GIANT FIRE BEETLE",
+            "GIANT CENTIPEDE",
             *args, **kwargs
             )
            
            self.CHARACTER = "V"
-           self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
+           self.ARMOR_CLASS = 13
 
-           self.EXPERIENCE_POINTS = 10
+           self.EXPERIENCE_POINTS = 50
 
            self.SPEED = 6
     
@@ -59,7 +59,7 @@ class GIANT_FIRE_BEETLE(MOB):
         GAME_RUNNING = True, True
         
         CHECK = ROLL(1, 20)
-        _CHECK = CHECK + 1
+        _CHECK = CHECK + 4
 
         HUD = ""
 
@@ -74,8 +74,11 @@ class GIANT_FIRE_BEETLE(MOB):
                 HUD += f"\nCRITICAL HIT: "
             else:
                 HUD += "\n"
-            DAMAGE = ROLL(1, 6) + 1
-            ENEMY.HEALTH -= DAMAGE
+            DAMAGE = ROLL(1, 4) + 2
+            POISON_DAMAGE = ROLL(3,6)
+            if ROLL(1,20)+ENEMY.CONSTITUTION_MODIFIER >= 11:
+                POISON_DAMAGE = 0
+            ENEMY.HEALTH -= DAMAGE + POISON_DAMAGE
 
             if ENEMY.HEALTH <= 0:
                 DEATH = f"\n{ENEMY.NAME} died."

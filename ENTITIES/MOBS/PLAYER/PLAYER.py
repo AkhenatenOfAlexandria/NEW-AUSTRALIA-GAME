@@ -94,6 +94,7 @@ class PLAYER(MOB):
             else:
                 break
     
+    
     def ROOM_CHECK(self):
         for mob in MOBS:
             if mob and LOCATION_ID(*mob.POSITION[0:2]) == LOCATION_ID(*self.POSITION[0:2]) and mob != self:
@@ -114,6 +115,7 @@ class PLAYER(MOB):
         elif MOVE == "EQUIP":
             self.EQUIP_ITEM(NUM)
     
+
     def _MOVE(self, MOVE, _LOCATION):
         POSITION = self.MOVE(MOVE)
         STAY = False
@@ -123,9 +125,18 @@ class PLAYER(MOB):
                 self.COMBAT_CHECK(MOB)
                 break
         if not STAY:
+            OLD_POSITION = self.POSITION[0:2]
             self.POSITION[0:2] = POSITION
+            DIFFERENCE = (POSITION[0]-OLD_POSITION[0], POSITION[1]-OLD_POSITION[1])
             _LOCATION.FOUND = True
-    
+            if self.ATTACHED and (
+                (abs(POSITION[0]-self.ATTACHED.POSITION[0]) > 1
+                    ) or (
+                    abs(POSITION[1]-self.ATTACHED.POSITION[1]) > 1
+                    )):
+                self.ATTACHED.POSITION[0] += DIFFERENCE[0]
+                self.ATTACHED.POSITION[1] += DIFFERENCE[1]
+
     
     def SPACE(self, _LOCATION):
         if self.PRONE:
@@ -147,14 +158,14 @@ class PLAYER(MOB):
         _DISPLAY += f"\nEXPERIENCE POINTS: {self.EXPERIENCE}"
         _DISPLAY += "\nINVENTORY:"
         if self.INVENTORY["WEAPON"]:
-            WEAPON = self.INVENTORY["WEAPON"].NAME
+            WEAPON = self.INVENTORY["WEAPON"].DESCRIPTION
+            _DISPLAY += f"\n     WEAPON: {WEAPON}"
         else:
-            WEAPON = None
+            _DISPLAY += f"\n     WEAPON: None."
         if self.INVENTORY["ARMOR"]:
-            ARMOR = self.INVENTORY["ARMOR"].NAME
+            ARMOR = self.INVENTORY["ARMOR"].DESCRIPTION
         else:
             ARMOR = None
-        _DISPLAY += f"\n     WEAPON: {WEAPON}"
         _DISPLAY += f"\n     ARMOR: {ARMOR}"
         if self.INVENTORY["SHIELD"]:
             _DISPLAY += "\n     SHIELD"
@@ -162,7 +173,7 @@ class PLAYER(MOB):
         _DISPLAY += f"\n     ITEMS:"
         
         for ITEM in self.INVENTORY["ITEMS"]:
-            _DISPLAY += f"\n          {self.INVENTORY['ITEMS'].index(ITEM)}. {ITEM.NAME}"
+            _DISPLAY += f"\n          {self.INVENTORY['ITEMS'].index(ITEM)}. {ITEM.DESCRIPTION}"
         
         UPDATE_DISPLAY("INFO", _DISPLAY)
     
@@ -200,6 +211,13 @@ class PLAYER(MOB):
                 if _WEAPON:
                     _ITEMS.append(_WEAPON)
                 self.INVENTORY["WEAPON"] = _ITEM
+                _ITEMS.remove(_ITEM)
+                _DISPLAY = f"\nEQUIPPED {_ITEM.NAME}"
+            elif _ITEM.TYPE == "SHIELD":
+                _SHIELD = self.INVENTORY["SHIELD"]
+                if _SHIELD:
+                    _ITEMS.append(_SHIELD)
+                self.INVENTORY["SHIELD"] = _ITEM
                 _ITEMS.remove(_ITEM)
                 _DISPLAY = f"\nEQUIPPED {_ITEM.NAME}"
             

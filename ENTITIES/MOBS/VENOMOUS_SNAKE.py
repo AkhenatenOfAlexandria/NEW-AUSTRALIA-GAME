@@ -4,21 +4,22 @@ from LOGIC.MATH import ROLL
 from WORLD.GLOBAL import UPDATE_DISPLAY, DISPLAY
 
 import logging
+import math
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 
-class GIANT_FIRE_BEETLE(MOB):
+class VENOMOUS_SNAKE(MOB):
     def __init__(
             self,
             POSITION=[0,0,0,0],
-            STRENGTH=8,
-            DEXTERITY=10,
-            CONSTITUTION=12,
+            STRENGTH=2,
+            DEXTERITY=16,
+            CONSTITUTION=11,
             INTELLIGENCE=1,
-            WISDOM=7,
+            WISDOM=10,
             CHARISMA=3,
-            HEALTH=4,
+            HEALTH=2,
             *args, **kwargs
             ):
            super().__init__(
@@ -30,14 +31,14 @@ class GIANT_FIRE_BEETLE(MOB):
             WISDOM,
             CHARISMA,
             HEALTH,
-            "GIANT FIRE BEETLE",
+            "VENOMOUS SNAKE",
             *args, **kwargs
             )
            
-           self.CHARACTER = "V"
+           self.CHARACTER = "s"
            self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
 
-           self.EXPERIENCE_POINTS = 10
+           self.EXPERIENCE_POINTS = 25
 
            self.SPEED = 6
     
@@ -47,7 +48,7 @@ class GIANT_FIRE_BEETLE(MOB):
 
     
     def HEALTH_ROLL():
-        return ROLL(1, 6) + 1
+        return ROLL(1, 4)
     
     
     def DEFAULT_ITEMS(self):
@@ -59,7 +60,7 @@ class GIANT_FIRE_BEETLE(MOB):
         GAME_RUNNING = True, True
         
         CHECK = ROLL(1, 20)
-        _CHECK = CHECK + 1
+        _CHECK = CHECK + 5
 
         HUD = ""
 
@@ -74,18 +75,21 @@ class GIANT_FIRE_BEETLE(MOB):
                 HUD += f"\nCRITICAL HIT: "
             else:
                 HUD += "\n"
-            DAMAGE = ROLL(1, 6) + 1
-            ENEMY.HEALTH -= DAMAGE
+            DAMAGE = 1
+            POISON_DAMAGE = ROLL(2, 4)
+            if ROLL(1,20)+ENEMY.CONSTITUTION_MODIFIER >= 10:
+                POISON_DAMAGE = math.floor(POISON_DAMAGE/2)
 
+            ENEMY.HEALTH -= DAMAGE + POISON_DAMAGE
+
+            logging.info(f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE and {POISON_DAMAGE} POISON DAMAGE.")
+            HUD += f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE and {POISON_DAMAGE} POISON DAMAGE."
             if ENEMY.HEALTH <= 0:
                 DEATH = f"\n{ENEMY.NAME} died."
                 
                 GAME_RUNNING = ENEMY.DIE()
                 if hasattr(self, 'EXPERIENCE_LEVEL') and hasattr(ENEMY, 'EXPERIENCE_POINTS'):
                     self.EXPERIENCE += ENEMY.EXPERIENCE_POINTS
-                
-            logging.info(f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE.")
-            HUD += f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE."
             if DEATH:
                 HUD += DEATH
 

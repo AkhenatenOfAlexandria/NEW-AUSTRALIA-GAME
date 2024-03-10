@@ -1,3 +1,14 @@
+Alpha 1.2.0:
+    Changes:
+        - Added Large Rooms.
+        - Doors are now in the center of the Wall instead of the entire Wall.
+        - Added CONSTRICTOR SNAKES, GIANT BATS, GIANT CENTIPEDES, GIANT CONSTRICTOR SNAKES, STIRGES, and VENOMOUS SNAKES.
+        - Monsters now generate per room and in larger numbers.
+    Patches:
+        - Cleaned up log.
+        - Fixed bug preventing rooms from spawning to the east.
+        - Items now display with PRICE and DAMAGE.
+
 Alpha 1.1.0:
     Changes:
         - Q now throws items.

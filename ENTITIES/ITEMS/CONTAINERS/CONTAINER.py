@@ -30,7 +30,7 @@ class CONTAINER(ITEM):
         if self.GOLD:
             DISPLAY+=f"\n     GOLD: {self.GOLD}"
         for item in self.CONTENTS:
-            DISPLAY += f"\n     {self.CONTENTS.index(item)}. {item.NAME}"
+            DISPLAY += f"\n     {self.CONTENTS.index(item)}. {item.DESCRIPTION}"
         UPDATE_DISPLAY("INFO", DISPLAY)
 
 
@@ -41,4 +41,4 @@ class CONTAINER(ITEM):
 
     def CLOSE_CONTAINER(self):
         self.OPEN = False
-        UPDATE_DISPLAY("INFO", f"\nClosed {self.NAME}.")
+        UPDATE_DISPLAY("INFO", f"\n\nClosed {self.NAME}.")

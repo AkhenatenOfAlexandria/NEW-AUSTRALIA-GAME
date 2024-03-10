@@ -6,3 +6,4 @@ class MELEE_WEAPON(ITEM):
         super().__init__(TYPE, POSITION, PRICE, *args, **kwargs)
 
         self.DAMAGE = DAMAGE
+        self.DESCRIPTION = f"{self.NAME}: {self.PRICE} GOLD: {self.DAMAGE[0]}D{self.DAMAGE[1]} DAMAGE"

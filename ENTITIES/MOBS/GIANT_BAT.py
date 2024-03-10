@@ -8,17 +8,17 @@ import logging
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 
-class GIANT_FIRE_BEETLE(MOB):
+class GIANT_BAT(MOB):
     def __init__(
             self,
             POSITION=[0,0,0,0],
-            STRENGTH=8,
-            DEXTERITY=10,
-            CONSTITUTION=12,
-            INTELLIGENCE=1,
-            WISDOM=7,
-            CHARISMA=3,
-            HEALTH=4,
+            STRENGTH=15,
+            DEXTERITY=16,
+            CONSTITUTION=11,
+            INTELLIGENCE=2,
+            WISDOM=12,
+            CHARISMA=6,
+            HEALTH=22,
             *args, **kwargs
             ):
            super().__init__(
@@ -30,16 +30,16 @@ class GIANT_FIRE_BEETLE(MOB):
             WISDOM,
             CHARISMA,
             HEALTH,
-            "GIANT FIRE BEETLE",
+            "GIANT BAT",
             *args, **kwargs
             )
            
-           self.CHARACTER = "V"
+           self.CHARACTER = "B"
            self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
 
-           self.EXPERIENCE_POINTS = 10
+           self.EXPERIENCE_POINTS = 50
 
-           self.SPEED = 6
+           self.SPEED = 12
     
 
     def UPDATE(self, *args, **kwargs):
@@ -47,7 +47,7 @@ class GIANT_FIRE_BEETLE(MOB):
 
     
     def HEALTH_ROLL():
-        return ROLL(1, 6) + 1
+        return ROLL(4, 10)
     
     
     def DEFAULT_ITEMS(self):
@@ -59,7 +59,7 @@ class GIANT_FIRE_BEETLE(MOB):
         GAME_RUNNING = True, True
         
         CHECK = ROLL(1, 20)
-        _CHECK = CHECK + 1
+        _CHECK = CHECK + 4
 
         HUD = ""
 
@@ -74,7 +74,7 @@ class GIANT_FIRE_BEETLE(MOB):
                 HUD += f"\nCRITICAL HIT: "
             else:
                 HUD += "\n"
-            DAMAGE = ROLL(1, 6) + 1
+            DAMAGE = ROLL(1,6)+2
             ENEMY.HEALTH -= DAMAGE
 
             if ENEMY.HEALTH <= 0:

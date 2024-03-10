@@ -10,3 +10,4 @@ class ITEM(ENTITY):
         self.ITEM_ID = ITEMS.index(self)
         self.NAME = f"{self.TYPE}.{self.ITEM_ID}"
         self.PRICE = PRICE
+        self.DESCRIPTION = f"{self.NAME}: {self.PRICE} GOLD"

@@ -1,5 +1,5 @@
 from ENTITIES.MOBS.MOB import MOB
-from ENTITIES.MOBS.AI.FOLLOW_PLAYER import ATTACK_PLAYER
+from ENTITIES.MOBS.AI.FOLLOW_PLAYER import BLOOD_DRAIN
 from LOGIC.MATH import ROLL
 from WORLD.GLOBAL import UPDATE_DISPLAY, DISPLAY
 
@@ -8,17 +8,17 @@ import logging
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 
-class GIANT_FIRE_BEETLE(MOB):
+class STIRGE(MOB):
     def __init__(
             self,
             POSITION=[0,0,0,0],
-            STRENGTH=8,
-            DEXTERITY=10,
-            CONSTITUTION=12,
-            INTELLIGENCE=1,
-            WISDOM=7,
-            CHARISMA=3,
-            HEALTH=4,
+            STRENGTH=16,
+            DEXTERITY=11,
+            CONSTITUTION=2,
+            INTELLIGENCE=8,
+            WISDOM=6,
+            CHARISMA=4,
+            HEALTH=2,
             *args, **kwargs
             ):
            super().__init__(
@@ -30,24 +30,23 @@ class GIANT_FIRE_BEETLE(MOB):
             WISDOM,
             CHARISMA,
             HEALTH,
-            "GIANT FIRE BEETLE",
+            "STIRGE",
             *args, **kwargs
             )
            
-           self.CHARACTER = "V"
-           self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
+           self.CHARACTER = "B"
+           self.ARMOR_CLASS = 14
 
-           self.EXPERIENCE_POINTS = 10
+           self.EXPERIENCE_POINTS = 1
 
-           self.SPEED = 6
-    
+           self.SPEED = 8
 
     def UPDATE(self, *args, **kwargs):
-        ATTACK_PLAYER(self)
+        BLOOD_DRAIN(self, self.ATTACHEE)
 
     
     def HEALTH_ROLL():
-        return ROLL(1, 6) + 1
+        return ROLL(1, 4)
     
     
     def DEFAULT_ITEMS(self):
@@ -59,7 +58,7 @@ class GIANT_FIRE_BEETLE(MOB):
         GAME_RUNNING = True, True
         
         CHECK = ROLL(1, 20)
-        _CHECK = CHECK + 1
+        _CHECK = CHECK + 5
 
         HUD = ""
 
@@ -74,8 +73,14 @@ class GIANT_FIRE_BEETLE(MOB):
                 HUD += f"\nCRITICAL HIT: "
             else:
                 HUD += "\n"
-            DAMAGE = ROLL(1, 6) + 1
+            DAMAGE = ROLL(1, 4) + 3
             ENEMY.HEALTH -= DAMAGE
+
+            self.ATTACHEE = ENEMY
+            ENEMY.ATTACHED = self
+
+            logging.info(f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE.")
+            HUD += f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE."
 
             if ENEMY.HEALTH <= 0:
                 DEATH = f"\n{ENEMY.NAME} died."
@@ -84,8 +89,6 @@ class GIANT_FIRE_BEETLE(MOB):
                 if hasattr(self, 'EXPERIENCE_LEVEL') and hasattr(ENEMY, 'EXPERIENCE_POINTS'):
                     self.EXPERIENCE += ENEMY.EXPERIENCE_POINTS
                 
-            logging.info(f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE.")
-            HUD += f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE."
             if DEATH:
                 HUD += DEATH
 

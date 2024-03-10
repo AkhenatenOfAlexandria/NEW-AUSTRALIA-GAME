@@ -3,7 +3,6 @@ import math
 from ENTITIES.ENTITY import ENTITY
 from WORLD.LOCATIONS.LOCATION_ID import LOCATION_ID
 from LOGIC.MATH import ROLL
-from LOGIC.FUNCTIONS import INITIATIVE
 from ENTITIES.ITEMS.MELEE_WEAPONS.MELEE_WEAPON import MELEE_WEAPON
 from WORLD.GLOBAL import UPDATE_DISPLAY, DISPLAY, MOBS, ADD_ENTITY, REMOVE_ENTITY
 import logging
@@ -53,6 +52,8 @@ class MOB(ENTITY):
         self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
         self.PROFICIENCY = PROFICIENCY
         self.PRONE = False
+        self.GRAPPLER = None
+        self.GRAPPLED = None
     
 
     def MODIFIER(self, ATTRIBUTE):
@@ -171,3 +172,7 @@ class MOB(ENTITY):
     def ROLL_INITIATIVE(self, *args):
         INITIATIVE_ROLL = ROLL(1, 20) + self.DEXTERITY_MODIFIER
         return INITIATIVE_ROLL
+    
+    
+    def GRAPPLE_CHECK(self):
+        return ROLL(1,20)+self.STRENGTH_MODIFIER

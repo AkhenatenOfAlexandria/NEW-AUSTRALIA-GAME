@@ -40,20 +40,28 @@ class LOCATION:
     def _DRAW(self):
         LENGTH = int(self.MAX_X - self.MIN_X)
         HEIGHT = int(self.MAX_Y - self.MIN_Y)
+        
+        if "NORTH" in self.DOORS:
+            NORTH_DOOR = self.DOORS["NORTH"][1] - self.MIN_Y
+        if "SOUTH" in self.DOORS:
+            SOUTH_DOOR = self.DOORS["SOUTH"][1] - self.MIN_Y
+        if "EAST" in self.DOORS:
+            EAST_DOOR = self.DOORS["EAST"][0] - self.MIN_X
+        if "WEST" in self.DOORS:
+            WEST_DOOR = self.DOORS["WEST"][0] - self.MIN_X
+
         _STRING = ""
         
         EAST_WALL = "#"
         WEST_WALL = "#"
-        if "NORTH" in self.DOORS:
-            ROOM = "*"
-        else:
-            ROOM = "#"
-        for i in range(LENGTH-1):
-            if "EAST" in self.DOORS:
+        ROOM = "#"
+        NORTH_DOOR_ROOM = "*"
+        for i in range(1, LENGTH):
+            if "EAST" in self.DOORS and i == EAST_DOOR:
                 EAST_WALL += "*"
             else:
                 EAST_WALL += "#"
-            if "WEST" in self.DOORS:
+            if "WEST" in self.DOORS and i == WEST_DOOR:
                 WEST_WALL += "*"
             else:
                 WEST_WALL += "#"
@@ -62,17 +70,27 @@ class LOCATION:
         for i in range(LENGTH-1):
             if self.VICTORY:
                 ROOM += "+"
+                NORTH_DOOR_ROOM += "+"
             elif self.START:
                 ROOM += "-"
+                NORTH_DOOR_ROOM += "-"
             else:
+                NORTH_DOOR_ROOM += " "
                 ROOM += " "
-        if "SOUTH" in self.DOORS:
-            ROOM += "*"
+        if "SOUTH" in self.DOORS and "NORTH" in self.DOORS and NORTH_DOOR == SOUTH_DOOR:
+            NORTH_DOOR_ROOM += "*"
         else:
-            ROOM += "#"
+            NORTH_DOOR_ROOM += "#"
+            SOUTH_DOOR_ROOM = ROOM + "*"
+        ROOM += "#"
         _STRING += EAST_WALL
-        for i in range(HEIGHT-1):
-            _STRING += f"\n{ROOM}"
+        for i in range(1, HEIGHT):
+            if "NORTH" in self.DOORS and i == NORTH_DOOR:
+                _STRING += f"\n{NORTH_DOOR_ROOM}"
+            elif "SOUTH" in self.DOORS and i== SOUTH_DOOR:
+                _STRING += f"\n{SOUTH_DOOR_ROOM}"
+            else:
+                _STRING += f"\n{ROOM}"
         _STRING += f"\n{WEST_WALL}"
         return _STRING
     

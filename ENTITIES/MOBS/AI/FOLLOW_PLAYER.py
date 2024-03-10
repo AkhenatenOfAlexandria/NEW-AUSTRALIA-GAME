@@ -1,9 +1,30 @@
-from WORLD.GLOBAL import PLAYERS, MOBS
-from LOGIC.MATH import DISTANCE
+from WORLD.GLOBAL import PLAYERS, MOBS, UPDATE_DISPLAY, DISPLAY
+from LOGIC.MATH import DISTANCE, ROLL
 import logging
 
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+
+
+def BLOOD_DRAIN(MOB, ATTACHEE):
+    if ATTACHEE:
+        DAMAGE = ROLL(1,4)+3
+        ATTACHEE.HEALTH -= DAMAGE
+
+        _HUD = f"\n{MOB.NAME} drained {ATTACHEE.NAME}, dealing {DAMAGE} DAMAGE."
+        logging.info(_HUD)
+        HUD = _HUD
+        DEATH = None
+        if ATTACHEE.HEALTH <= 0:
+            DEATH = f"\n{ATTACHEE.NAME} died."
+            
+            GAME_RUNNING = ATTACHEE.DIE()
+            
+        if DEATH:
+            HUD += DEATH
+        UPDATE_DISPLAY("INFO", DISPLAY["INFO"]+HUD)
+    else:
+        ATTACK_PLAYER(MOB)
 
 
 def ATTACK_PLAYER(MOB):
@@ -47,4 +68,11 @@ def FOLLOW_PLAYER(MOB):
                         break
                 if not STAY:
                     MOB.POSITION[0:2] = POSITION
+                    if MOB.ATTACHED and (
+                        (abs(POSITION[0]-MOB.ATTACHED.POSITION[0]) > 1
+                         ) or (
+                            abs(POSITION[1]-MOB.ATTACHED.POSITION[1]) > 1
+                            )):
+                        MOB.ATTACHED.POSITION[0:2] = POSITION
+
 

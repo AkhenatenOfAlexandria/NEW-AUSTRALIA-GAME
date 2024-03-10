@@ -72,27 +72,27 @@ class GAMESTATE:
             case tcod.event.KeyDown(sym=tcod.event.KeySym.BACKSPACE):
                 E_ACTIVE = False
                 Q_ACTIVE = False
-                UPDATE_DISPLAY("INFO", "")
+                UPDATE_DISPLAY("INFO", "\n")
             case tcod.event.KeyDown(sym=tcod.event.KeySym.l):
                 self.UPDATE("LOOT")
             case tcod.event.KeyDown(sym=tcod.event.KeySym.r):
                 self.UPDATE("LONG REST")
             case tcod.event.KeyDown(sym=tcod.event.KeySym.q):
                 if E_ACTIVE:
-                    UPDATE_DISPLAY("INFO", f"\nEQUIP CANCELLED.")
+                    UPDATE_DISPLAY("INFO", f"\n\nEQUIP CANCELLED.")
                     E_ACTIVE = False
                 if Q_ACTIVE:
-                    UPDATE_DISPLAY("INFO", f"\nDROP CANCELLED.")
+                    UPDATE_DISPLAY("INFO", f"\n\nDROP CANCELLED.")
                     Q_ACTIVE = False
                 else:
                     PLAYER.SELECT_ITEM()
                     Q_ACTIVE = True
             case tcod.event.KeyDown(sym=tcod.event.KeySym.e):
                 if Q_ACTIVE:
-                    UPDATE_DISPLAY("INFO", f"\nDROP CANCELLED.")
+                    UPDATE_DISPLAY("INFO", f"\n\nDROP CANCELLED.")
                     Q_ACTIVE = False
                 if E_ACTIVE:
-                    UPDATE_DISPLAY("INFO", f"\nEQUIP CANCELLED.")
+                    UPDATE_DISPLAY("INFO", f"\n\nEQUIP CANCELLED.")
                     E_ACTIVE = False
                 else:
                     PLAYER.SELECT_ITEM()
