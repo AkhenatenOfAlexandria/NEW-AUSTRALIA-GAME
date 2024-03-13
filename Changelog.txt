@@ -1,3 +1,11 @@
+Alpha 1.2.1:
+    - Increased Difficulty of higher Levels.
+    - Changed Size to 80*60.
+    - Hopefully patched Start Room bug.
+    - Added generic error catcher.
+    - Created Game Executable.
+    - Game Window is now named New Australia Game {Version}.
+
 Alpha 1.2.0:
     Changes:
         - Added Large Rooms.
