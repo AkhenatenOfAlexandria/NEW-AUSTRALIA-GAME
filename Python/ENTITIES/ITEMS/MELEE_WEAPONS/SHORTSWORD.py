@@ -3,4 +3,4 @@ from ENTITIES.ITEMS.MELEE_WEAPONS.MELEE_WEAPON import MELEE_WEAPON
 class SHORTSWORD(MELEE_WEAPON):
 
     def __init__(self, POSITION=None, PRICE=10):
-        super().__init__((1, 6), "SHORTSWORD", POSITION, PRICE, "FINESSE")
+        super().__init__((1, 6), "SHORTSWORD", 2, POSITION, PRICE, None, "FINESSE", "LIGHT")

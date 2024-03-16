@@ -1,6 +1,7 @@
 from ENTITIES.MOBS.MOB import MOB
 from ENTITIES.MOBS.AI.FOLLOW_PLAYER import ATTACK_PLAYER
 from ENTITIES.ITEMS.MELEE_WEAPONS.DAGGER import DAGGER
+from ENTITIES.ITEMS.RANGED_WEAPONS.SLING import SLING
 from LOGIC.MATH import ROLL
 
 
@@ -48,4 +49,6 @@ class KOBOLD(MOB):
     
     def DEFAULT_ITEMS(self):
         self.INVENTORY["WEAPON"] = DAGGER()
+        self.INVENTORY["ITEMS"] = [SLING()]
+        self.INVENTORY["SLING-PELLETS"] = 20
         

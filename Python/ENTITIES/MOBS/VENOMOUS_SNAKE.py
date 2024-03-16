@@ -77,7 +77,10 @@ class VENOMOUS_SNAKE(MOB):
                 HUD += "\n"
             DAMAGE = 1
             POISON_DAMAGE = ROLL(2, 4)
-            if ROLL(1,20)+ENEMY.CONSTITUTION_MODIFIER >= 10:
+            POISON_SAVE = ROLL(1,20)
+            if ENEMY.EXHAUSTION >= 3:
+                POISON_SAVE = min(POISON_SAVE, ROLL(1,20))
+            if POISON_SAVE+ENEMY.CONSTITUTION_MODIFIER >= 10:
                 POISON_DAMAGE = math.floor(POISON_DAMAGE/2)
 
             ENEMY.HEALTH -= DAMAGE + POISON_DAMAGE

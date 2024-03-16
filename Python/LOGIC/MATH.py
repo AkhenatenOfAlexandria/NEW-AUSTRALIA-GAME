@@ -4,6 +4,57 @@ import logging
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 
+def PASSED(X1, Y1, X2, Y2, X, Y):
+    if X and X2 >= X1:
+            return True
+    elif X1 >= X2:
+        return True
+    if Y and Y2 >= Y1:
+        return True
+    elif Y1 >= Y2:
+        return True
+    return False
+
+
+def CHOOSE_LOOT(TABLE):
+    logging.debug(f"INITIATING CHOOSE_LOOT(). {TABLE}")
+    RAND = random.random()
+    logging.debug(f"RAND: {RAND}")
+    CUMULATIVE = 0
+    COUNT = 0
+    for ITEM, WEIGHT in TABLE.items():
+        COUNT +=1
+        logging.debug(f"{COUNT}: {ITEM} of WEIGHT {WEIGHT}.")
+        CUMULATIVE += WEIGHT
+        if CUMULATIVE >= RAND:
+            if ITEM:
+                logging.debug(f"LOOT CHOSEN: {ITEM}.")
+                return ITEM
+            else:
+                logging.error(f"No loot generated. {TABLE}")
+
+
+def NUMBERS_LOOT_TABLE(NUMBER):
+    TOTAL = 0
+    WEIGHTS = []
+    for i in range(1, NUMBER+1):
+        TOTAL += 1/i
+    for i in range (1, NUMBER+1):
+        WEIGHT = (1/i)/TOTAL
+        WEIGHTS.append(WEIGHT)
+    return WEIGHTS
+
+
+def CHOOSE_NUMBER(WEIGHTS):
+    RAND = random.random()
+    CUMULATIVE = 0
+    
+    for i in range(1, len(WEIGHTS)+1):
+        CUMULATIVE += WEIGHTS[i-1]
+        if CUMULATIVE >= RAND:
+            return i
+
+
 def VECTOR_DIRECTION_RADIANS(X, Y):   
     # Calculate the angle in radians using atan2
     angle_radians = math.atan2(X, Y)

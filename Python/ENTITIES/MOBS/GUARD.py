@@ -46,6 +46,8 @@ class GUARD(ABORIGINE):
     
     def DEFAULT_ITEMS(self):
         self.INVENTORY["WEAPON"] = SPEAR()
+        self.INVENTORY["WEAPON"].SECOND_HAND = True
+        self.INVENTORY["WEAPON"].DAMAGE = self.INVENTORY["WEAPON"].DAMAGE2
         self.INVENTORY["SHIELD"] = True
         self.INVENTORY["ARMOR"] = CHAIN_SHIRT()
     

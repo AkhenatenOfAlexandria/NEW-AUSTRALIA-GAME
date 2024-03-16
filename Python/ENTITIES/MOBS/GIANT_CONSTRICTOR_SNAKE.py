@@ -35,7 +35,7 @@ class GIANT_CONSTRICTOR_SNAKE(MOB):
             *args, **kwargs
             )
            
-           self.CHARACTER = "s"
+           self.CHARACTER = "S"
            self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
 
            self.EXPERIENCE_POINTS = 450

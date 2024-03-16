@@ -77,7 +77,10 @@ class SPIDER(MOB):
                 HUD += "\n"
             DAMAGE = 1
             POISON_DAMAGE = ROLL(1, 4)
-            if ROLL(1, 20) + ENEMY.CONSTITUTION_MODIFIER >= 9:
+            POISON_SAVE = ROLL(1,20)
+            if ENEMY.EXHAUSTION >= 3:
+                POISON_SAVE = min(POISON_SAVE, ROLL(1,20))
+            if POISON_SAVE + ENEMY.CONSTITUTION_MODIFIER >= 9:
                 POISON_DAMAGE = 0
 
             ENEMY.HEALTH -= DAMAGE + POISON_DAMAGE
@@ -89,8 +92,8 @@ class SPIDER(MOB):
                 if hasattr(self, 'EXPERIENCE_LEVEL') and hasattr(ENEMY, 'EXPERIENCE_POINTS'):
                     self.EXPERIENCE += ENEMY.EXPERIENCE_POINTS
                 
-            logging.info(f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE and {POISON_DAMAGE} POISON DAMAGE.")
-            HUD += f"{self.NAME} hit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE and {POISON_DAMAGE} POISON DAMAGE."
+            logging.info(f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE and {POISON_DAMAGE} POISON DAMAGE.")
+            HUD += f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE and {POISON_DAMAGE} POISON DAMAGE."
             if DEATH:
                 HUD += DEATH
 

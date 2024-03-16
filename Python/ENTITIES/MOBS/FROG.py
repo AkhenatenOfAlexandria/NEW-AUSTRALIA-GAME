@@ -1,7 +1,6 @@
 from ENTITIES.MOBS.MOB import MOB
-from ENTITIES.MOBS.AI.FOLLOW_PLAYER import ATTACK_PLAYER
+from ENTITIES.MOBS.AI.FLEE_PLAYER import FLEE_PLAYER
 from LOGIC.MATH import ROLL
-from WORLD.GLOBAL import UPDATE_DISPLAY, DISPLAY
 
 import logging
 
@@ -43,7 +42,7 @@ class FROG(MOB):
     
 
     def UPDATE(self, *args, **kwargs):
-        pass
+        FLEE_PLAYER(self)
 
     
     def HEALTH_ROLL():

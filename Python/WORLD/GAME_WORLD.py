@@ -25,7 +25,15 @@ NORTH_ROOM = SMALL_ROOM(-34, 0, LEVEL, DOORS={"SOUTH": (-31, 0)})
 WEST_CORRIDOR = CORRIDOR(0, -17, "Y", 1, DOORS={"EAST":(0, -3), "WEST": (0, -31)})
 WEST_ROOM = SMALL_ROOM(0, -34, 1, DOORS={"EAST": (0, -31)}, VICTORY=True)
 
-GAME_WORLD = [None, [
+GAME_WORLD = [[
+        CENTRAL_ROOM,
+        SOUTH_CORRIDOR,
+        SOUTH_ROOM,
+        NORTH_CORRIDOR,
+        NORTH_ROOM,
+        WEST_CORRIDOR,
+        WEST_ROOM
+    ], [
         CENTRAL_ROOM,
         SOUTH_CORRIDOR,
         SOUTH_ROOM,

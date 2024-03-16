@@ -16,7 +16,7 @@ class LOCATION:
         self.MIN_Y = int(Y - RADIUS_Y)
         self.MAX_Y = int(Y + RADIUS_Y)
         self.LEVEL = LEVEL
-        self.Z = LEVEL*2
+        self.Z = -2*(26-LEVEL)
         self.W = REALM
         self.DESCRIPTION = DESCRIPTION
         self.LOCAL_ITEMS = LOCAL_ITEMS if LOCAL_ITEMS is not None else []

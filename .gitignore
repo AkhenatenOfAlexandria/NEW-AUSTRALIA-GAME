@@ -2,3 +2,17 @@
 TEST.py
 Venv.bat
 Test.bat
+__pycache__
+*.pyc
+/Python/__pycache__
+/Python/ENTITIES/__pycache__
+/Python/ENTITIES/ITEMS/__pycache__
+/Python/ENTITIES/ITEMS/ARMOR/__pycache__
+/Python/ENTITIES/ITEMS/CONTAINERS/__pycache__
+/Python/ENTITIES/ITEMS/MELEE_WEAPONS/__pycache__
+/Python/ENTITIES/MOBS/__pycache__
+/Python/ENTITIES/MOBS/AI/__pycache__
+/Python/ENTITIES/MOBS/PLAYER/__pycache__
+/Python/LOGIC/__pycache__
+/Python/WORLD/__pycache__
+/Python/WORLD/LOCATIONS/__pycache__

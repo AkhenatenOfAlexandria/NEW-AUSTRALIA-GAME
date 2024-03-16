@@ -1,3 +1,28 @@
+Alpha 1.3.0:
+    Changes:
+        - Can now drop or unequip WEAPON or SHIELD with F or G respectively.
+        - Added BATTLEAXE, FLAIL, GLAIVE, GREATAXE, GREATSWORD, HALBERD, LANCE, LIGHT_HAMMER, MACE, MAUL, MORNINGSTAR, PIKE, RAPIER, SICKLE, TRIDENT, WAR PICK, WARHAMMER, and WHIP.
+        - Added Ranged Attacks.
+        - Added DART, LONGBOW, SHORTBOW, SLING, and ammo.
+        - Added WATER, THIRST, and EXHAUSTION.
+        - Added SHORT REST and nerfed LONG REST.
+        - Added double-handedness.
+        - Improved loot generation.
+        - ARMOR can now be equipped.
+        - ITEMS can now be dropped in CHESTS and looted from the FLOOR.
+        - Mobs now drop Items on Death.
+        - Added GIANT FROG and GIANT LIZARD.
+        - Added LEVEL 0.
+        - Drastically increased starting HEALTH.
+    Patches:
+        - Corrected STIRGE experience from 1 to 25.
+        - Corrected SPEAR label from JAVELIN, and other labels.
+        - The Player is now informed when he is knocked PRONE.
+        - Dropped Items now display.
+        - This time I really fixed the Display.
+        - Frogs now flee the Player.
+        - Various balancing and tweaks.
+
 Alpha 1.2.1:
     - Increased Difficulty of higher Levels.
     - Changed Size to 80*60.

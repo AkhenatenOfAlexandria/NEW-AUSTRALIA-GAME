@@ -4,4 +4,4 @@ from WORLD.GLOBAL import ITEMS
 class CHAIN_MAIL(ARMOR):
 
     def __init__(self, POSITION=None, PRICE=75, *args, **kwargs):
-        super().__init__(16, "CHAIN MAIL", HEAVY="HEAVY", POSITION=POSITION, PRICE=PRICE, *args, **kwargs)
+        super().__init__(16, "CHAIN-MAIL", 55, HEAVY="HEAVY", POSITION=POSITION, PRICE=PRICE, *args, **kwargs)

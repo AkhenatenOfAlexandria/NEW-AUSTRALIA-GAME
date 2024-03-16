@@ -1,0 +1,6 @@
+from ENTITIES.ITEMS.MELEE_WEAPONS.MELEE_WEAPON import MELEE_WEAPON
+
+class BATTLEAXE(MELEE_WEAPON):
+
+    def __init__(self, POSITION=None, PRICE=10):
+        super().__init__((1, 8), "BATTLEAXE", POSITION, 4, PRICE, (1, 10), "VERSATILE")

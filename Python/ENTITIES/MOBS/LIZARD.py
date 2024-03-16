@@ -34,7 +34,7 @@ class LIZARD(MOB):
             *args, **kwargs
             )
            
-           self.CHARACTER = "L"
+           self.CHARACTER = "l"
            self.ARMOR_CLASS = self.ARMOR_CLASS_CALCULUS()
 
            self.EXPERIENCE_POINTS = 10

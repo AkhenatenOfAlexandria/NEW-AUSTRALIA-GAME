@@ -27,6 +27,8 @@ class HEADS_UP_DISPLAY:
         POSITION = PLAYER.POSITION
         HEALTH = PLAYER.HEALTH
         MAX_HEALTH = PLAYER.MAX_HEALTH
+        WATER = PLAYER.WATER
+        EXHAUSTION = PLAYER.EXHAUSTION
         
         X, Y = 1, 1
         while INFO.count('\n') > 20:
@@ -35,5 +37,5 @@ class HEADS_UP_DISPLAY:
                 UPDATE_DISPLAY("INFO", f"{INFO[INDEX:]}")
                 INFO = DISPLAY["INFO"]            
 
-        _DISPLAY = f"TIME: {TIME}\nLEVEL: {LEVEL}\nLOCATION: {POSITION}\nHEALTH: {HEALTH}/{MAX_HEALTH}{INFO}"
+        _DISPLAY = f"TIME: {TIME}\nLEVEL: {LEVEL}\nLOCATION: {POSITION}\nHEALTH: {HEALTH}/{MAX_HEALTH}\nEXHAUSTION: {EXHAUSTION}/6\nWATER: {WATER}/8\n{INFO}"
         CONSOLE.print(X, Y, string=_DISPLAY)

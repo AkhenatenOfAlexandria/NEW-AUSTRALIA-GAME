@@ -76,7 +76,10 @@ class GIANT_CENTIPEDE(MOB):
                 HUD += "\n"
             DAMAGE = ROLL(1, 4) + 2
             POISON_DAMAGE = ROLL(3,6)
-            if ROLL(1,20)+ENEMY.CONSTITUTION_MODIFIER >= 11:
+            POISON_CHECK = ROLL(1,20)
+            if ENEMY.EXHAUSTION >= 3:
+                POISON_CHECK = min(POISON_CHECK, ROLL(1,20))
+            if POISON_CHECK+ENEMY.CONSTITUTION_MODIFIER >= 11:
                 POISON_DAMAGE = 0
             ENEMY.HEALTH -= DAMAGE + POISON_DAMAGE
 

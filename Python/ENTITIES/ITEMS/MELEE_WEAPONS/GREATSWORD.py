@@ -1,0 +1,6 @@
+from ENTITIES.ITEMS.MELEE_WEAPONS.MELEE_WEAPON import MELEE_WEAPON
+
+class GREATSWORD(MELEE_WEAPON):
+
+    def __init__(self, POSITION=None, PRICE=50):
+        super().__init__((2, 6), "GREATSWORD", 6, POSITION, PRICE, None, "HEAVY", "TWO-HANDED")

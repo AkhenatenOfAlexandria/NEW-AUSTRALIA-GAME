@@ -16,7 +16,7 @@ GLOBAL_FLAGS = {
 
 DISPLAY = {
     "HUD" : None,
-    "INFO" : "\n\n"
+    "INFO" : ""
 }
 
 DEBUG = GLOBAL_FLAGS["DEBUG"]

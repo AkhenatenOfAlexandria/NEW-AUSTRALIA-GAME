@@ -76,8 +76,14 @@ class PITBULL(MOB):
             DAMAGE = ROLL(1, 6) + 1
             ENEMY.HEALTH -= DAMAGE
 
-            if ROLL (1, 20) + ENEMY.STRENGTH_MODIFIER < 11:
+            STRENGTH_SAVE = ROLL(1,20)
+            if ENEMY.EXHAUSTION >= 3:
+                STRENGTH_SAVE = min(STRENGTH_SAVE, ROLL(1,20))
+            if ROLL (1, 20) + ENEMY.STRENGTH_MODIFIER < 11 and not ENEMY.PRONE:
                 ENEMY.PRONE = True
+                _PRONE = " and knocking him PRONE"
+            else:
+                _PRONE = ""
 
             if ENEMY.HEALTH <= 0:
                 DEATH = f"\n{ENEMY.NAME} died."
@@ -87,7 +93,7 @@ class PITBULL(MOB):
                     self.EXPERIENCE += ENEMY.EXPERIENCE_POINTS
                 
             logging.info(f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE.")
-            HUD += f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE."
+            HUD += f"{self.NAME} bit {ENEMY.NAME}, dealing {DAMAGE} DAMAGE{_PRONE}."
             if DEATH:
                 HUD += DEATH
 

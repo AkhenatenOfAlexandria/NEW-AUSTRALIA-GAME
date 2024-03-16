@@ -37,7 +37,7 @@ class STIRGE(MOB):
            self.CHARACTER = "B"
            self.ARMOR_CLASS = 14
 
-           self.EXPERIENCE_POINTS = 1
+           self.EXPERIENCE_POINTS = 25
 
            self.SPEED = 8
 
