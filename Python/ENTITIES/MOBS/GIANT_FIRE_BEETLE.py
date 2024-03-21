@@ -55,6 +55,7 @@ class GIANT_FIRE_BEETLE(MOB):
     
 
     def COMBAT_CHECK(self, ENEMY):
+        self.SEEN = True
         DEATH = None
         GAME_RUNNING = True, True
         

@@ -7,6 +7,7 @@ from ENTITIES.ITEMS.MELEE_WEAPONS.MELEE_WEAPON import MELEE_WEAPON
 from ENTITIES.ITEMS.RANGED_WEAPONS.RANGED_WEAPON import RANGED_WEAPON
 from ENTITIES.ITEMS.ARMOR.ARMOR import ARMOR
 from LOGIC.FUNCTIONS import SORT_MOBS, SORT_MOBS_MELEE
+from WORLD.LOCATIONS.LOCATION_ID import LOCATION_ID
 
 import logging
 import random
@@ -66,6 +67,8 @@ class PLAYER(MOB):
         self.LONG_REST = 0
         self.HIT_DICE = 1
         self.MAX_HIT_DICE = 1
+
+        self.PERCEPTION_CHECK = False
         
 
     def XP_LEVEL(self):
@@ -113,7 +116,8 @@ class PLAYER(MOB):
     
 
     def UPDATE(self, MOVE, NUM=None, VERSATILE=False, HANDS=None):
-        logging.debug("UPDATING PLAYER.")
+        logging.debug(f"UPDATING PLAYER: {MOVE}.")
+        self.PERCEPTION_CHECK = False
         _LOCATION = LOCATION_ID(*self.POSITION[0:2])
         TIME = GLOBAL_FLAGS["TIME"]
         if TIME and TIME % 10800 == 0:
@@ -152,7 +156,11 @@ class PLAYER(MOB):
                 logging.error("Invalid target.")
         elif MOVE == "MELEE_ATTACK":
             try:
-                self.COMBAT_CHECK(SORT_MOBS_MELEE(self)[NUM])
+                if self.INVENTORY["WEAPON"] and "REACH" in self.INVENTORY["WEAPON"].ATTRIBUTES:
+                    REACH = True
+                else:
+                    REACH = False
+                self.COMBAT_CHECK(SORT_MOBS_MELEE(self, REACH)[NUM])
             except IndexError:
                 logging.error("Invalid target.")
         elif MOVE == "DRINK":
@@ -165,7 +173,10 @@ class PLAYER(MOB):
         for MOB in MOBS:
             if MOB and POSITION == MOB.POSITION[0:2]:
                 STAY = True
-                self.COMBAT_CHECK(MOB)
+                if MOB.SEEN:
+                    self.COMBAT_CHECK(MOB)
+                else:
+                    MOB.SEEN = True
                 break
         if not STAY:
             MULTIPLIER = 1
@@ -177,6 +188,7 @@ class PLAYER(MOB):
                 return
             OLD_POSITION = self.POSITION[0:2]
             self.POSITION[0:2] = POSITION
+            STEALTH = ROLL(1,20)
             DIFFERENCE = (POSITION[0]-OLD_POSITION[0], POSITION[1]-OLD_POSITION[1])
             _LOCATION.FOUND = True
             if self.ATTACHED and (
@@ -189,11 +201,14 @@ class PLAYER(MOB):
 
     
     def SPACE(self, _LOCATION):
+        logging.debug("SPACE activated.")
         if self.PRONE:
             self.PRONE = False
             UPDATE_DISPLAY("INFO", DISPLAY["INFO"]+f"\n{self.NAME} is no longer PRONE.")
+            return
         if _LOCATION.VICTORY:
-                UPDATE_FLAG("NEW LEVEL", True)
+            UPDATE_FLAG("NEW LEVEL", True)
+            return
         elif len(_LOCATION.LOCAL_ITEMS):
             for ITEM in _LOCATION.LOCAL_ITEMS:
                 if ITEM in CONTAINERS and DISTANCE(*self.POSITION[0:2], *ITEM.POSITION[0:2]) < 2:
@@ -206,6 +221,16 @@ class PLAYER(MOB):
             for ITEM in _LOCATION.LOCAL_ITEMS:
                 _DISPLAY += f"\n{ITEM.NAME}: {ITEM.POSITION}"
             UPDATE_DISPLAY("INFO", DISPLAY["INFO"]+_DISPLAY)
+        for MOB in MOBS:
+            if MOB and LOCATION_ID(*MOB.POSITION[0:2]):
+                PERCEPTION = ROLL(1,20) + self.WISDOM_MODIFIER + self.PROFICIENCY
+                STEALTH = ROLL(1,20) + MOB.DEXTERITY_MODIFIER + MOB.PROFICIENCY
+                logging.debug(f"PERCEPTION: {PERCEPTION} STEALTH: {STEALTH}")
+                if PERCEPTION > STEALTH:
+                    logging.debug("PERCEPTION successful.")
+                    self.PERCEPTION_CHECK = True
+                    MOB.SEEN = True
+
 
     def OPEN_INVENTORY(self):
         _DISPLAY = "\n"
@@ -388,6 +413,14 @@ class PLAYER(MOB):
         _LOCATION = LOCATION_ID(*self.POSITION[0:2])
         if len(_LOCATION.LOCAL_ITEMS):
             for ITEM in _LOCATION.LOCAL_ITEMS:
+                if len(self.INVENTORY["ITEMS"]) >= 10:
+                    break
+                if ITEM not in CONTAINERS and DISTANCE(*self.POSITION[0:2], *ITEM.POSITION[0:2]) < 2:
+                    self.INVENTORY["ITEMS"].append(ITEM)
+                    ITEM.POSITION = None
+                    _LOCATION.REMOVE_ITEM(ITEM)
+                    return
+            for ITEM in _LOCATION.LOCAL_ITEMS:
                 if ITEM in CONTAINERS and DISTANCE(*self.POSITION[0:2], *ITEM.POSITION[0:2]) < 2 and ITEM.OPEN:
                     if ITEM.GOLD:
                         self.INVENTORY["GOLD"] += ITEM.GOLD
@@ -407,14 +440,6 @@ class PLAYER(MOB):
                         ITEM.REMOVE_ITEM(_ITEM)
                     ITEM.VIEW_CONTENTS()
                     return
-            for ITEM in _LOCATION.LOCAL_ITEMS:
-                if ITEM not in CONTAINERS and DISTANCE(*self.POSITION[0:2], *ITEM.POSITION[0:2]) < 2:
-                    if len(self.INVENTORY["ITEMS"]) < 10:
-                        self.INVENTORY["ITEMS"].append(ITEM)
-                        ITEM.POSITION = None
-                        _LOCATION.REMOVE_ITEM(ITEM)
-                    else:
-                        break
     
 
     def DIE(self):
@@ -468,3 +493,9 @@ class PLAYER(MOB):
             _DISPLAY += "\n0. LONG REST: 8 HOURS."
         _DISPLAY += "\n1. SHORT REST: 1 HOUR."
         UPDATE_DISPLAY("INFO", _DISPLAY)
+
+
+    def VERSATILE(self, NUM):
+        if len(self.INVENTORY["ITEMS"]) > NUM and "VERSATILE" in self.INVENTORY["ITEMS"][NUM].ATTRIBUTES:
+            return True
+        return False

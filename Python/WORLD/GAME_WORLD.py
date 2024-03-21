@@ -33,7 +33,8 @@ GAME_WORLD = [[
         NORTH_ROOM,
         WEST_CORRIDOR,
         WEST_ROOM
-    ], [
+        ]]
+''', [
         CENTRAL_ROOM,
         SOUTH_CORRIDOR,
         SOUTH_ROOM,
@@ -41,8 +42,7 @@ GAME_WORLD = [[
         NORTH_ROOM,
         WEST_CORRIDOR,
         WEST_ROOM
-    ]
-]
+    ]'''
 
 
 def CREATE_LEVEL():

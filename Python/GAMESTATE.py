@@ -78,6 +78,12 @@ class GAMESTATE:
                     Q_ACTIVE = False
                 if E_ACTIVE:
                     _MOVE = "EQUIP"
+                    if PLAYER.VERSATILE(_NUM):
+                        PLAYER.UPDATE(_MOVE, _NUM)
+                        VERSATILE = True
+                        CACHE = 0
+                        logging.debug(f"VERSATILE: {VERSATILE}; CACHE: {CACHE}")
+                        _MOVE = None
                     E_ACTIVE = False
                 if Z_ACTIVE:
                     _MOVE = "RANGED_ATTACK"
@@ -93,18 +99,21 @@ class GAMESTATE:
                     UPDATE_DISPLAY("INFO", f"")
                     self.UPDATE(_MOVE)
                 elif _MOVE is not None and len(PLAYER.INVENTORY["ITEMS"]) > _NUM:
-                    if self.UPDATE(_MOVE, _NUM):
-                        VERSATILE = True
-                        CACHE = 0
-                        logging.debug(f"VERSATILE: {VERSATILE}; CACHE: {CACHE}")
+                    self.UPDATE(_MOVE, _NUM)
             case tcod.event.KeyDown(sym=tcod.event.KeySym.N1):
                 _NUM = 1
                 logging.debug(f"1 PRESSED. VERSATILE: {VERSATILE}")
                 if Q_ACTIVE:
                     _MOVE = "DROP"
                     Q_ACTIVE = False
-                if E_ACTIVE or VERSATILE:
+                if E_ACTIVE:
                     _MOVE = "EQUIP"
+                    if PLAYER.VERSATILE(_NUM):
+                        PLAYER.UPDATE(_MOVE, _NUM)
+                        VERSATILE = True
+                        CACHE = 1
+                        logging.debug(f"VERSATILE: {VERSATILE}; CACHE: {CACHE}")
+                        _MOVE = None
                     E_ACTIVE = False
                 if Z_ACTIVE:
                     _MOVE = "RANGED_ATTACK"
@@ -119,9 +128,10 @@ class GAMESTATE:
                     R_ACTIVE = False
                     UPDATE_DISPLAY("INFO", f"")
                     self.UPDATE(_MOVE)
-                elif _MOVE is not None and (len(PLAYER.INVENTORY["ITEMS"]) > _NUM or VERSATILE):
+                if (_MOVE is not None and len(PLAYER.INVENTORY["ITEMS"]) > _NUM) or VERSATILE:
                     if VERSATILE:
-                        self.UPDATE(_MOVE, CACHE, VERSATILE, _NUM)
+                        logging.debug("Attempting to equip VERSATILE weapon.")
+                        self.UPDATE("EQUIP", CACHE, VERSATILE, _NUM)
                         VERSATILE = False
                     elif self.UPDATE(_MOVE, _NUM):
                         VERSATILE = True
@@ -133,8 +143,14 @@ class GAMESTATE:
                 if Q_ACTIVE:
                     _MOVE = "DROP"
                     Q_ACTIVE = False
-                if E_ACTIVE or VERSATILE:
+                if E_ACTIVE:
                     _MOVE = "EQUIP"
+                    if PLAYER.VERSATILE(_NUM):
+                        PLAYER.UPDATE(_MOVE, _NUM)
+                        VERSATILE = True
+                        CACHE = 2
+                        logging.debug(f"VERSATILE: {VERSATILE}; CACHE: {CACHE}")
+                        _MOVE = None
                     E_ACTIVE = False
                 if Z_ACTIVE:
                     _MOVE = "RANGED_ATTACK"
@@ -144,9 +160,10 @@ class GAMESTATE:
                     _MOVE = "MELEE_ATTACK"
                     X_ACTIVE = False
                     self.UPDATE(_MOVE, _NUM)
-                elif _MOVE is not None and (len(PLAYER.INVENTORY["ITEMS"]) > _NUM or VERSATILE):
+                if (_MOVE is not None and len(PLAYER.INVENTORY["ITEMS"]) > _NUM) or VERSATILE:
                     if VERSATILE:
-                        self.UPDATE(_MOVE, CACHE, VERSATILE, _NUM)
+                        logging.debug("Attempting to equip VERSATILE weapon.")
+                        self.UPDATE("EQUIP", CACHE, VERSATILE, _NUM)
                         VERSATILE = False
                     elif self.UPDATE(_MOVE, _NUM):
                         VERSATILE = True
@@ -159,6 +176,12 @@ class GAMESTATE:
                     Q_ACTIVE = False
                 if E_ACTIVE:
                     _MOVE = "EQUIP"
+                    if PLAYER.VERSATILE(_NUM):
+                        PLAYER.UPDATE(_MOVE, _NUM)
+                        VERSATILE = True
+                        CACHE = 3
+                        logging.debug(f"VERSATILE: {VERSATILE}; CACHE: {CACHE}")
+                        _MOVE = None
                     E_ACTIVE = False
                 if Z_ACTIVE:
                     _MOVE = "RANGED_ATTACK"
@@ -180,6 +203,12 @@ class GAMESTATE:
                     Q_ACTIVE = False
                 if E_ACTIVE:
                     _MOVE = "EQUIP"
+                    if PLAYER.VERSATILE(_NUM):
+                        PLAYER.UPDATE(_MOVE, _NUM)
+                        VERSATILE = True
+                        CACHE = 4
+                        logging.debug(f"VERSATILE: {VERSATILE}; CACHE: {CACHE}")
+                        _MOVE = None
                     E_ACTIVE = False
                 if Z_ACTIVE:
                     _MOVE = "RANGED_ATTACK"
@@ -201,6 +230,12 @@ class GAMESTATE:
                     Q_ACTIVE = False
                 if E_ACTIVE:
                     _MOVE = "EQUIP"
+                    if PLAYER.VERSATILE(_NUM):
+                        PLAYER.UPDATE(_MOVE, _NUM)
+                        VERSATILE = True
+                        CACHE = 5
+                        logging.debug(f"VERSATILE: {VERSATILE}; CACHE: {CACHE}")
+                        _MOVE = None
                     E_ACTIVE = False
                 if Z_ACTIVE:
                     _MOVE = "RANGED_ATTACK"
@@ -222,6 +257,12 @@ class GAMESTATE:
                     Q_ACTIVE = False
                 if E_ACTIVE:
                     _MOVE = "EQUIP"
+                    if PLAYER.VERSATILE(_NUM):
+                        PLAYER.UPDATE(_MOVE, _NUM)
+                        VERSATILE = True
+                        CACHE = 6
+                        logging.debug(f"VERSATILE: {VERSATILE}; CACHE: {CACHE}")
+                        _MOVE = None
                     E_ACTIVE = False
                 if Z_ACTIVE:
                     _MOVE = "RANGED_ATTACK"
@@ -243,6 +284,12 @@ class GAMESTATE:
                     Q_ACTIVE = False
                 if E_ACTIVE:
                     _MOVE = "EQUIP"
+                    if PLAYER.VERSATILE(_NUM):
+                        PLAYER.UPDATE(_MOVE, _NUM)
+                        VERSATILE = True
+                        CACHE = 7
+                        logging.debug(f"VERSATILE: {VERSATILE}; CACHE: {CACHE}")
+                        _MOVE = None
                     E_ACTIVE = False
                 if Z_ACTIVE:
                     _MOVE = "RANGED_ATTACK"
@@ -264,6 +311,12 @@ class GAMESTATE:
                     Q_ACTIVE = False
                 if E_ACTIVE:
                     _MOVE = "EQUIP"
+                    if PLAYER.VERSATILE(_NUM):
+                        PLAYER.UPDATE(_MOVE, _NUM)
+                        VERSATILE = True
+                        CACHE = 8
+                        logging.debug(f"VERSATILE: {VERSATILE}; CACHE: {CACHE}")
+                        _MOVE = None
                     E_ACTIVE = False
                 if Z_ACTIVE:
                     _MOVE = "RANGED_ATTACK"
@@ -285,6 +338,12 @@ class GAMESTATE:
                     Q_ACTIVE = False
                 if E_ACTIVE:
                     _MOVE = "EQUIP"
+                    if PLAYER.VERSATILE(_NUM):
+                        PLAYER.UPDATE(_MOVE, _NUM)
+                        VERSATILE = True
+                        CACHE = 9
+                        logging.debug(f"VERSATILE: {VERSATILE}; CACHE: {CACHE}")
+                        _MOVE = None
                     E_ACTIVE = False
                 if Z_ACTIVE:
                     _MOVE = "RANGED_ATTACK"
@@ -443,22 +502,22 @@ class GAMESTATE:
                 self.UPDATE("")
                 _TIME += 1
             if PLAYER.EXHAUSTION < 4:
-                PLAYER.HEALTH = PLAYER.MAX_HEALTH
+                PLAYER.HEALTH = max(PLAYER.HEALTH, PLAYER.MAX_HEALTH)
             else:
-                PLAYER.HEALTH = int(PLAYER.MAX_HEALTH/2)
+                PLAYER.HEALTH = max(PLAYER.HEALTH, int(PLAYER.MAX_HEALTH/2))
             if PLAYER.WATER:
                 PLAYER.EXHAUSTION = max(0, PLAYER.EXHAUSTION-1)
             PLAYER.HIT_DICE = min(
                 PLAYER.MAX_HIT_DICE,
                 PLAYER.HIT_DICE + max (
                     int(PLAYER.MAX_HIT_DICE/2), 1 ))
-        if MOVE == "SHORT REST" and _REST and PLAYER.HIT_DICE:
+        if MOVE == "SHORT REST" and _REST:
             _TIME = 0
             while _TIME < 3600:
                 self.UPDATE("")
                 _TIME += 1
             while PLAYER.HIT_DICE and PLAYER.MAX_HEALTH-PLAYER.HEALTH:
-                PLAYER.HEALTH = min(ROLL(1,10)+PLAYER.CONSTITUTION_MODIFIER, PLAYER.MAX_HEALTH)
+                PLAYER.HEALTH = min(PLAYER.HEALTH+ROLL(1,10)+PLAYER.CONSTITUTION_MODIFIER, PLAYER.MAX_HEALTH)
                 PLAYER.HIT_DICE -= 1
         if versatile:
             return "VERSATILE"

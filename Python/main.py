@@ -15,10 +15,10 @@ from WORLD.LOCATIONS.LOCATION_ID import LOCATION_ID
 
 
 def MAIN():
-	VERSION = "ALPHA 1.3.0_01"
+	VERSION = "ALPHA 1.3.1"
 	
-	WIDTH = 100
-	HEIGHT = 54
+	WIDTH = 107
+	HEIGHT = 60
 
 	tileset = tcod.tileset.load_tilesheet(
 			"Alloy_curses_12x12.png", columns=16, rows=16, charmap=tcod.tileset.CHARMAP_CP437
@@ -34,7 +34,7 @@ def MAIN():
 		GAME_RUNNING = True
 		while GAME_RUNNING:
 			LEVEL = GLOBAL_FLAGS["LEVEL"]
-			if LEVEL <= 1:
+			if LEVEL < 1:
 				for ROOM in GAME_WORLD[LEVEL]:
 					ROOM.STRING = ROOM._DRAW()
 			elif LEVEL < 26:

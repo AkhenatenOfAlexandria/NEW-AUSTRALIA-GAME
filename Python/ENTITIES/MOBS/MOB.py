@@ -67,6 +67,7 @@ class MOB(ENTITY):
         self.GRAPPLER = None
         self.GRAPPLED = None
         self.EXHAUSTION = 0
+        self.PERCEPTION = 10 + self.WISDOM_MODIFIER + self.PROFICIENCY
     
 
     def MODIFIER(self, ATTRIBUTE):
@@ -95,6 +96,7 @@ class MOB(ENTITY):
     
     
     def COMBAT_CHECK(self, ENEMY):
+        self.SEEN = True
         DEATH = None
         GAME_RUNNING = True, True
 
@@ -192,10 +194,12 @@ class MOB(ENTITY):
         if _ARMOR:
             ITEMS.append(_ARMOR)
         for ITEM in self.INVENTORY["ITEMS"]:
-            ITEMS.append(ITEM)
+            if ITEM:
+                ITEMS.append(ITEM)
         for ITEM in ITEMS:
-            ITEM.POSITION = self.POSITION[0:4]
-            ROOM.ADD_ITEM(ITEM)
+            if ITEM:
+                ITEM.POSITION = self.POSITION[0:4]
+                ROOM.ADD_ITEM(ITEM)
         MESSAGE = f"{self.NAME} died."
         logging.info(MESSAGE)
         REMOVE_ENTITY(self)

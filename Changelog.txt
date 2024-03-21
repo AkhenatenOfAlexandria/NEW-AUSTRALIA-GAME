@@ -1,3 +1,16 @@
+Alpha 1.3.1:
+    - The Temporary Health of Level 0 is now higher, and expires at the end of the Level.
+    - Fixed bug that crashed the Game when Mob attempted to switch weapons.
+    - Fixed bug preventing Short Rest increasing Health.
+    - Level 1 is now randomly generated.
+    - Pike no longer displays multiple Damage values.
+    - Loot now loots floor items before open Chests.
+    - Window is now 107 * 60.
+    - Fixed bug preventing X attack working with REACH weapons.
+    - Short Rest will no longer reduce Player Health.
+    - Fixed bug causing crash upon Mob death.
+    - Equipping a VERSATILE Weapon no longer takes two turns.
+
 Alpha 1.3.0_2:
     - Fixed fatal mistake in Executable.
 

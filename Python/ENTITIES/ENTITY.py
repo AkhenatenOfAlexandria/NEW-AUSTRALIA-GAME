@@ -18,6 +18,7 @@ class ENTITY:
         self.ATTRIBUTES = set(args)
         self.ATTACHEE = None
         self.ATTACHED = None
+        self.SEEN = False
 
 
     def DRAW(self, CONSOLE):

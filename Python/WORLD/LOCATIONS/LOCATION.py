@@ -28,7 +28,7 @@ class LOCATION:
 
 
     def ADD_ITEM(self, ITEM):
-        self.LOCAL_ITEMS.append(ITEM)
+        self.LOCAL_ITEMS.insert(0, ITEM)
         if GLOBAL_FLAGS["DEBUG"]:
             logging.debug(f"Added {ITEM.NAME} to {self.DESCRIPTION}.")
 

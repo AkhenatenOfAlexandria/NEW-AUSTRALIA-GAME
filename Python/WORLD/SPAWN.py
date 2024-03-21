@@ -39,7 +39,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 def PLAYER_SPAWN(COUNT):
     for i in range(COUNT):
         _PLAYER = PLAYER()
-        _PLAYER.HEALTH = _PLAYER.MAX_HEALTH*25
+        _PLAYER.HEALTH = _PLAYER.MAX_HEALTH*100
 
 
 
@@ -51,7 +51,7 @@ def SPAWN():
     for PLAYER in PLAYERS:
         PLAYER.POSITION[2:4] = [-2*(26-LEVEL), REALM]
         PLAYER.XP_LEVEL()
-        if PLAYER.MAX_HEALTH > PLAYER.HEALTH:
+        if PLAYER.MAX_HEALTH > PLAYER.HEALTH or LEVEL == 1:
             PLAYER.HEALTH = PLAYER.MAX_HEALTH
 
     for MOB in MOBS:

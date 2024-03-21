@@ -54,6 +54,7 @@ class APE(MOB):
     
 
     def COMBAT_CHECK(self, ENEMY):
+        self.SEEN = True
         for i in range(2):
             DEATH = None
             GAME_RUNNING = True, True

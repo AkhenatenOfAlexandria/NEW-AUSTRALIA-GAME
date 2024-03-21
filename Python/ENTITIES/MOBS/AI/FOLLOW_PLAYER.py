@@ -46,7 +46,8 @@ def ATTACK_PLAYER(MOB):
             for ITEM in MOB.INVENTORY["ITEMS"]:
                 if "RANGED" in ITEM.ATTRIBUTES:
                     MOB.INVENTORY["ITEMS"].append(WEAPON)
-                    MOB.INVENTORY["WEAPON"] = MOB.INVENTORY["ITEMS"].pop(ITEM)
+                    MOB.INVENTORY["ITEMS"].remove(ITEM)
+                    MOB.INVENTORY["WEAPON"] = ITEM
                     return
             FOLLOW_PLAYER(MOB)
 
@@ -55,7 +56,8 @@ def ATTACK_PLAYER(MOB):
             for ITEM in MOB.INVENTORY["ITEMS"]:
                     if not "RANGED" in ITEM.ATTRIBUTES:
                         MOB.INVENTORY["ITEMS"].append(WEAPON)
-                        MOB.INVENTORY["WEAPON"] = MOB.INVENTORY["ITEMS"].pop(ITEM)
+                        MOB.INVENTORY["ITEMS"].remove(ITEM)
+                        MOB.INVENTORY["WEAPON"] = ITEM
                         return
         FOLLOW_PLAYER(MOB)
     else:
@@ -96,6 +98,13 @@ def FOLLOW_PLAYER(MOB):
                                 break
                         if not STAY:
                             MOB.POSITION[0:2] = POSITION
+                            STEALTH = ROLL(1,20) + MOB.DEXTERITY_MODIFIER + MOB.PERCEPTION
+                            if STEALTH < PLAYER.PERCEPTION:
+                                MOB.SEEN = True
+                            elif not PLAYER.PERCEPTION_CHECK:
+                                STEALTH = min(STEALTH, ROLL(1,20)+MOB.DEXTERITY_MODIFIER+MOB.PERCEPTION)
+                                if STEALTH > PLAYER.PERCEPTION:
+                                    MOB.SEEN = False
                             if MOB.ATTACHED and (
                                 (abs(POSITION[0]-MOB.ATTACHED.POSITION[0]) > 1
                                 ) or (

@@ -55,6 +55,7 @@ class GIANT_BAT(MOB):
     
 
     def COMBAT_CHECK(self, ENEMY):
+        self.SEEN = True
         DEATH = None
         GAME_RUNNING = True, True
         

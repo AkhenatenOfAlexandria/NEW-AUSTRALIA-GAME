@@ -60,7 +60,7 @@ def SORT_MOBS_MELEE(MOB, REACH = False):
         RANGE = math.sqrt(2)
     for mob in MOBS:
         POSITION1 = MOB.POSITION[0:2]
-        if mob and mob !=MOB and LOCATION_ID(*mob.POSITION[0:2]) == ROOM and DISTANCE(*POSITION1, *mob.POSITION[0:2]) <= RANGE:
+        if mob and mob !=MOB and mob.SEEN and LOCATION_ID(*mob.POSITION[0:2]) == ROOM and DISTANCE(*POSITION1, *mob.POSITION[0:2]) <= RANGE:
             mobs[mob] = mob.POSITION[0]
     
     while len(mobs):
@@ -98,7 +98,7 @@ def SORT_MOBS(MOB):
     mobs = {}
     for mob in MOBS:
         POSITION1 = MOB.POSITION[0:2]
-        if mob and mob !=MOB and LOCATION_ID(*mob.POSITION[0:2]) == ROOM:
+        if mob and mob !=MOB and mob.SEEN and LOCATION_ID(*mob.POSITION[0:2]) == ROOM:
             mobs[mob] = DISTANCE(*mob.POSITION[0:2], *POSITION1)
     
     while len(mobs):
